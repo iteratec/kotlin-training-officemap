@@ -1,0 +1,56 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.0.3.RELEASE'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web:2.0.3.RELEASE') {
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+    compile 'org.springframework.boot:spring-boot-starter-jetty:2.0.3.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.0.3.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-security:2.0.3.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-actuator:2.0.3.RELEASE'
+    //compile 'org.springframework.boot:spring-boot-devtools:2.0.3.RELEASE'
+    compile 'org.springframework:spring-tx'
+    compile 'io.springfox:springfox-swagger2:2.6.1'
+    compile 'io.springfox:springfox-swagger-ui:2.6.1'
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'org.postgresql:postgresql:42.2.5'
+    compile group: 'com.microsoft.azure', name: 'azure-active-directory-spring-boot-starter', version: '2.0.3'
+    compile group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.0.7.RELEASE'
+    compile group: 'org.springframework.security', name: 'spring-security-oauth2-jose', version: '5.0.7.RELEASE'
+    compile 'org.flywaydb:flyway-core:5.2.1'
+    //compile group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: '2.1.0.RELEASE'
+
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.2.0')
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.2.0'
+    testCompile('org.springframework.boot:spring-boot-starter-test') {
+        exclude module: 'junit'
+    }
+}
+
+jar {
+    baseName = 'office-map'
+    version = '0.1.0'
+}
+
+test {
+    useJUnitPlatform()
+}

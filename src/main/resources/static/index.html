@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta name="viewport" content="width=device-width , initial-scale=1" charset="utf-8">
+    <title>Arbeitsplatzbelegung</title>
+    <link rel="stylesheet" href="/jqueryui/jquery-ui.css">
+    <script src="jqueryui/external/jquery/jquery.js"></script>
+    <script src="jqueryui/jquery-ui.js"></script>
+    <script src="jqueryui/datepicker-de.js"></script>
+    <link rel="stylesheet" href="/jqueryui/jquery-ui.theme.css"/>
+
+    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/css/updateBootstrap.css"/>
+    <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/customstyle.css"/>
+
+    <script type="text/javascript" src="js/DateUtils.js"></script>
+    <script type="text/javascript" src="js/homepage.js"></script>
+    <script type="text/javascript" src="js/homepageReservation.js"></script>
+
+</head>
+<body>
+<div class="container-fluid">
+    <div id="topbar" class="row content">
+        <div class="col-sm-4 col-md-3 col-lg-2">
+            <a href="/index.html"><img src="/images/iteratec_logo.jpg"
+                                       id="logo"></a>
+        </div>
+        <div id="officemap" class="col-sm-8 col-md-9 col-lg-10">
+            <h3>
+                itera<font color="#aa228f">OfficeMap </font>
+            </h3>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div id="statusbar" class="row content">
+        <div id="username" class="col-sm-4 col-md-3 col-lg-2">
+            <h4></h4>
+        </div>
+        <div id="pagetitle" class="col-sm-8 col-md-9 col-lg-10">
+            <h4>
+                Reservierungen vom <span id="selectedStartDate">dd-MM-YYYY</span>
+                bis zum <span id="selectedEndDate">dd-MM-YYYY</span>
+
+            </h4>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row content">
+        <div id="sidebar" class="col-sm-4 col-md-3 col-lg-2">
+            <nav class="navbar navbar-default sidebar" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="pull-left navbar-toggle"
+                                data-toggle="collapse"
+                                data-target="#bs-sidebar-navbar-collapse-1">
+                            <span class="sr-only">Toggle navigation</span> <span
+                                class="icon-bar"></span> <span class="icon-bar"></span> <span
+                                class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse"
+                         id="bs-sidebar-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li id="sidebarheader" class="nav-header">Menü</li>
+                            <li class="active"><a href="/index.html">Tagesansicht</a></li>
+                            <li><a href="/user.html">Mitarbeiterseite</a></li>
+                            <li id="sidebarheader" class="nav-header">Adminpanel</li>
+                            <li><a href="/admin_add_workplace.html">Arbeitsplatz
+                                hinzufügen</a></li>
+                            <li><a href="/admin_delete_workplace.html">Arbeitsplatz
+                                löschen</a></li>
+                            <li><a href="/admin_delete_reservation.html">Reservierungen
+                                löschen</a></li>
+                            <li><a class="logout" href="/logout"><span class="glyphicon glyphicon-log-out"></span>
+                                Ausloggen</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <h4 id="click-check"></h4>
+        <div id="maincontent" class="col-sm-8 col-md-9 col-lg-10">
+            <div class="row content">
+                <div class="col-sm-12 col-md-5 col-lg-4">
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-info">
+                            <button class="panel-heading" id="ph" data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne">
+                                <h4 class="panel-title accordion-toggle">
+                                    Optionen
+                                </h4>
+                            </button>
+                            <div id="collapseOne" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <h4>Zeitraum auswählen:</h4>
+
+                                    <form class="form-inline">
+										<span> Vom: <input class="form-control datepicker" type="text"
+                                                           name="Kalender" id="datepickerStart" size="10"
+                                                           onchange="defineDate(); showDate();">
+											<br>
+											Bis:  <input
+                                                    class="form-control datepicker" type="text" name="Kalender"
+                                                    id="datepickerEnd" size="10"
+                                                    onchange="defineDate(); showDate();">
+										</span>
+                                    </form>
+                                    <div id="errorMessage" style="color: red"></div>
+                                    <div id="actualDateStart"></div>
+                                    <div id="actualDateEnd"></div>
+                                    <br>
+                                    <input type="submit" class="btn btn-default"
+                                           id="selectWeekdays" value="Wochentage auswählen" onclick="onClickWeekdays()"/>
+                                    <br>
+                                    <div id="weekdayCheckboxes" class="btn-group"
+                                         data-toggle="buttons" onchange="updateCheckedWeekdays()">
+                                        <label class="btn btn-default weekday" id="MON"> <input
+                                                class="weekday" type="checkbox" name="weekday" value="1">Mo
+                                        </label> <label class="btn btn-default weekday" id="TUE"> <input
+                                            class="weekday" type="checkbox" name="weekday" value="2">Di
+                                    </label> <label class="btn btn-default weekday" id="WED"> <input
+                                            class="weekday" type="checkbox" name="weekday" value="3">Mi
+                                    </label> <label class="btn btn-default weekday" id="THU"> <input
+                                            class="weekday" type="checkbox" name="weekday" value="4">Do
+                                    </label> <label class="btn btn-default weekday" id="FRI"> <input
+                                            class="weekday" type="checkbox" name="weekday" value="5">Fr
+                                    </label> <label class="btn btn-default weekday" id="SAT"> <input
+                                            class="weekday" type="checkbox" name="weekday" value="6">Sa
+                                    </label> <label class="btn btn-default weekday" id="SUN"> <input
+                                            class="weekday" type="checkbox" name="weekday" value="0">So
+                                    </label>
+                                    </div>
+
+                                    <br>
+
+                                    <input type="submit" class="btn btn-default"
+                                           id="submitReservation" value="Reservieren" onclick="calcDays()"/>
+                                    <br>
+
+                                    <input type="submit" class="btn btn-default",
+                                           id="callNoFreeSpace" value="Hilfe, gibt keine freien Plätze mehr!"
+                                           onclick="window.location.href='mailto:Sascha.Flick@iteratec.de?subject=Officemap%3A%20Hilfe%2C%20ich%20finde%20keinen%20freien%20Sitzplatz%20mehr!&body=Hilfe%2C%20ich%20finde%20keinen%20freien%20Sitzplatz%20mehr!'"/>
+
+                                    <br>
+                                    <div id="successMessage" style="color: green"></div>
+                                    <br>
+                                    <h5>
+                                        Ausgewählter Arbeitsplatz: <span id="selectedWorkplace">
+										- </span>
+                                    </h5>
+                                    <div id="monthYearPicker"></div>
+                                    <div id="datePickerKeyTable">
+                                        <div class=" datePickerKeyTableReserved">…</div>
+                                        <div>= belegt</div>
+                                        <div class=" datePickerKeyTableSelected">…</div>
+                                        <div>= ausgewählt</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <div class="col-sm-12 col-md-7 col-lg-8 " id="workplace-map">
+
+                        <div class="legende" id="legende-id">
+                            <h4>Legende</h4>
+                            <p>Der Arbeitsplatz ist im gewählten Zeitraum</p>
+                            <p>
+                                <img src="/images/available.png" height="30px" width="30px">
+                                dauerhaft verfügbar
+                            </p>
+                            <p>
+                                <img src="/images/partial.png" height="30px" width="30px">
+                                teilweise belegt
+                            </p>
+                            <p>
+                                <img src="/images/adhoc.png" height="30px" width="30px">
+                                adhoc (für einen Tag) belegt
+                            </p>
+                            <p>
+                                <img src="/images/reserved.png" height="30px" width="30px">
+                                dauerhaft belegt
+                            </p>
+                        </div>
+                        <h4>Arbeitsplatzbelegung:</h4>
+                        <div class="office pre-scrollable" id="image"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>
