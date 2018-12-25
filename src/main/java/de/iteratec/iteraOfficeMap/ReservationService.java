@@ -41,19 +41,19 @@ public class ReservationService {
     }
 
     private void addReservationDirect(AddReservationDTO addReservationDTO, Workplace workplace, Principal principal) {
-        reservationRepository.save(new Reservation(addReservationDTO.startDate,
-                addReservationDTO.endDate, workplace, principal.getName(), addReservationDTO.adhoc));
+        reservationRepository.save(new Reservation(addReservationDTO.getStartDate(),
+                addReservationDTO.getEndDate(), workplace, principal.getName(), addReservationDTO.getAdhoc()));
     }
 
     private Workplace checkValidityAndGetWorkplace(AddReservationDTO addReservationDTO) {
-        Workplace workplace = workplaceRepository.findById(addReservationDTO.workplaceId)
+        Workplace workplace = workplaceRepository.findById(addReservationDTO.getWorkplaceId())
                 .orElseThrow(InvalidWorkplaceException::new);
 
-        if (addReservationDTO.getStartDate() > addReservationDTO.getEndDate() || addReservationDTO.getworkplaceId() == null) {
+        if (addReservationDTO.getStartDate() > addReservationDTO.getEndDate()) {
             throw new InvalidReservationException();
         }
 
-        if (!getConflictingReservations(addReservationDTO.getStartDate(), addReservationDTO.getEndDate(), addReservationDTO.getworkplaceId())
+        if (!getConflictingReservations(addReservationDTO.getStartDate(), addReservationDTO.getEndDate(), addReservationDTO.getWorkplaceId())
                 .isEmpty()) {
             throw new AlreadyExistsException();
         }
