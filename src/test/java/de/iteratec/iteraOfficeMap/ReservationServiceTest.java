@@ -68,11 +68,11 @@ class ReservationServiceTest {
 
     void assertReservationEqualsAddReservationDTO(Reservation reservation, AddReservationDTO addReservationDTO) {
 
-        assertEquals(reservation.getStartDate(), addReservationDTO.getStartDate());
-        assertEquals(reservation.getEndDate(), addReservationDTO.getEndDate());
+        assertEquals(reservation.getStartDate(), (Long) addReservationDTO.getStartDate());
+        assertEquals(reservation.getEndDate(), (Long) addReservationDTO.getEndDate());
         assertEquals(reservation.getUser(), addReservationDTO.getUser());
-        assertEquals(reservation.getWorkplace().getId(), addReservationDTO.getworkplaceId());
-        assertEquals(reservation.isAdhoc(), addReservationDTO.isAdhoc());
+        assertEquals(reservation.getWorkplace().getId(), (Long) addReservationDTO.getWorkplaceId());
+        assertEquals(reservation.isAdhoc(), addReservationDTO.getAdhoc());
     }
 
 
