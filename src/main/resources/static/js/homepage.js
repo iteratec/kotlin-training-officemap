@@ -15,7 +15,6 @@ var periodReservations = null;
 var startDate = null;
 var endDate = null;
 var noWeekdayChecked = true;
-var isAdhoc = false;
 
 var scrChangedToSmall = false;
 var parsedStartDate = null;
@@ -200,7 +199,6 @@ function generateAllReservationDays() {
 				
 				var reservation = {};
 				reservation.date = j;
-				reservation.adhoc = periodReservations[i].adhoc;
 				reservation.workplaceId = periodReservations[i].workplace.id;
 				if (reservation.date >= parsedStartDate
 						&& reservation.date <= parsedEndDate) {
@@ -211,7 +209,6 @@ function generateAllReservationDays() {
 			
 			
 			var reservation = {};
-            reservation.adhoc = periodReservations[i].adhoc;
 			reservation.date = periodReservations[i].date;
 			reservation.workplaceId = periodReservations[i].workplace.id;
 			allReservationDays.push(reservation);
@@ -255,11 +252,7 @@ function buildPeriodMap() {
 		if(noWeekdayChecked){
 			if (counter >= 1) {
 				status = "reserved";
-				if(counter == 1 && isAdhoc){
-					image = "/images/adhoc.png";
-                    isAdhoc = false;
-				}
-				else if (((parsedEndDate - parsedStartDate + 1) / MILLISPERDAY) == counter) {
+				if (((parsedEndDate - parsedStartDate + 1) / MILLISPERDAY) == counter) {
 					image = "/images/reserved.png";
 				} else {
 					image = "/images/partial.png";
@@ -269,11 +262,7 @@ function buildPeriodMap() {
 		} else {
 			if (counter >= 1) {
 				status = "reserved";
-                if(counter == 1 && isAdhoc){
-                    image = "/images/adhoc.png";
-                    isAdhoc = false;
-                }
-				else if (weekdayDateList.length == counter) {
+                if (weekdayDateList.length == counter) {
 					image = "/images/reserved.png";
 				} else {
 					image = "/images/partial.png";
@@ -319,9 +308,6 @@ function calcCounter(i){
 				if (workplaces[i].id == allReservationDays[k].id
 						&& weekdayDateList[j].parsedStartDate == allReservationDays[k].date) {
 					counter++;
-					if(allReservationDays[k].adhoc){
-						isAdhoc = true;
-					}
 				}
 			}
 		}
@@ -331,9 +317,6 @@ function calcCounter(i){
 		for (var j = 0; j < allReservationDays.length; j++) {
 			if (workplaces[i].id == allReservationDays[j].workplaceId) {
 				counter++;
-                if(allReservationDays[j].adhoc){
-                    isAdhoc = true;
-                }
 			}
 		}
 		

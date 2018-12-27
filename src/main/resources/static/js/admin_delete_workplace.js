@@ -21,6 +21,7 @@ function initialize() {
 
 function workplaceInitializer(workplaces) {
     buildMap("/images/delete.png", false, true, true, workplaces);
+
 }
 
 //http request to delete one workplace from the database

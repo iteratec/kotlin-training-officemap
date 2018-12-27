@@ -46,10 +46,8 @@ public class WorkplaceService {
                 .findByStartDateEqualsAndWorkplace(date, workplace);
         if (reservation == null) {
             return Status.FREE;
-        } else if (reservation.isAdhoc()) {
-            return Status.ADHOC;
-
-        } else {
+        }
+         else {
             return Status.NORMALRESERVATION;
         }
     }

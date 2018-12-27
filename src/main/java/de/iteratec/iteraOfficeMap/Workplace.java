@@ -15,6 +15,8 @@ public class Workplace {
     private String mapId;
     private int x;
     private int y;
+    @Column
+    private String equipment;
 
     public Workplace(String name) {
         super();
@@ -27,6 +29,16 @@ public class Workplace {
         this.x = x;
         this.y = y;
         this.mapId = mapId;
+        this.equipment = "";
+    }
+
+    public Workplace(String name, int x, int y, String mapId, String equipment) {
+        super();
+        this.name = name;
+        this.x = x;
+        this.y = y;
+        this.mapId = mapId;
+        this.equipment = equipment;
     }
 
     public Long getId() {
@@ -86,5 +98,13 @@ public class Workplace {
     public int hashCode() {
 
         return Objects.hash(name, x, y);
+    }
+
+    public String getEquipment() {
+        return equipment;
+    }
+
+    public void setEquipment(String equipment) {
+        this.equipment = equipment;
     }
 }

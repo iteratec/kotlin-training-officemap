@@ -42,7 +42,7 @@ public class ReservationService {
 
     private void addReservationDirect(AddReservationDTO addReservationDTO, Workplace workplace, Principal principal) {
         reservationRepository.save(new Reservation(addReservationDTO.getStartDate(),
-                addReservationDTO.getEndDate(), workplace, principal.getName(), addReservationDTO.getAdhoc()));
+                addReservationDTO.getEndDate(), workplace, principal.getName()));
     }
 
     private Workplace checkValidityAndGetWorkplace(AddReservationDTO addReservationDTO) {
@@ -79,21 +79,6 @@ public class ReservationService {
 
     }
 
-    /**
-     * adds a new adhoc reservation to the database
-     *
-     * @param workplaceID
-     */
-    public void reserveAdhoc(Long workplaceID) {
-
-        Workplace workplace = workplaceRepository.findById(workplaceID).get();
-        Reservation reservation = new Reservation(100L, 150L, workplace, "SaschAdhoc", true);
-
-        AddReservationDTO addReservationDTO = new AddReservationDTO(reservation);
-        addReservation(addReservationDTO, () -> "adHock");
-
-
-    }
 
     /**
      * @param startDate
@@ -250,22 +235,6 @@ public class ReservationService {
         }
     }
 
-    public void removeAdhoc(Long workplaceID) {
-        Workplace workplace = workplaceRepository.findById(workplaceID).get();
-
-        Long date = DateUtility.startOfDay(new Date());
-        Reservation reservation = reservationRepository
-                .findByStartDateEqualsAndWorkplace(date, workplace);
-        if (reservation == null) {
-            throw new DoesNotExistException();
-        } else if (!reservation.isAdhoc()) {
-            throw new InvalidReservationException();
-        } else {
-            DeleteReservationDTO deleteReservationDTO = new DeleteReservationDTO(reservation);
-            deleteReservation(deleteReservationDTO);
-        }
-
-    }
 
 
 }

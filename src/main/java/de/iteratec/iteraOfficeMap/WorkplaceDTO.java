@@ -8,6 +8,7 @@ public class WorkplaceDTO {
         this.mapId = workplace.getMapId();
         this.x = workplace.getX();
         this.y = workplace.getY();
+        this.equipment = workplace.getEquipment();
     }
 
     Long id;
@@ -15,6 +16,15 @@ public class WorkplaceDTO {
     String mapId;
     int x;
     int y;
+    String equipment;
+
+    public String getEquipment() {
+        return equipment;
+    }
+
+    public void setEquipment(String equipment) {
+        this.equipment = equipment;
+    }
 
     public Long getId() {
         return id;

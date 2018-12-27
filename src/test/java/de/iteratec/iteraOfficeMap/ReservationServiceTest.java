@@ -43,10 +43,10 @@ class ReservationServiceTest {
 
     private void createAndSaveReservations() {
         reservationBefore = new Reservation(50L, workplace, "john");
-        reservationLimit1 = new Reservation(100L, 149L, workplace, "sam", false);
-        reservationMid = new Reservation(150L, 199L, workplace, "john", false);
+        reservationLimit1 = new Reservation(100L, 149L, workplace, "sam");
+        reservationMid = new Reservation(150L, 199L, workplace, "john");
         reservationLimit2 = new Reservation(200L, workplace, "john");
-        reservationAfter = new Reservation(250L, 299L, workplace, "john", false);
+        reservationAfter = new Reservation(250L, 299L, workplace, "john");
         reservationRepository.saveAll(asList(reservationLimit1, reservationMid, reservationLimit2));
     }
 
@@ -54,7 +54,8 @@ class ReservationServiceTest {
     void init() {
         reservationRepository.deleteAll(reservationRepository.findAll());
         workplaceRepository.deleteAll(workplaceRepository.findAll());
-        workplace = workplaceRepository.save(new Workplace("myPlace", 0, 0, "mapId"));
+        workplace = workplaceRepository.save(new Workplace("myPlace", 0, 0, "mapId",
+                "Zwei Bildschirme"));
     }
 
     void assertReservationEqualsReservationDTO(Reservation reservation, ReservationDTO reservationDTO) {
@@ -63,7 +64,6 @@ class ReservationServiceTest {
         assertEquals(reservation.getEndDate(), reservationDTO.getEndDate());
         assertEquals(reservation.getUser(), reservationDTO.getUser());
         assertEquals(reservation.getWorkplace(), reservationDTO.getWorkplace());
-        assertEquals(reservation.isAdhoc(), reservationDTO.isAdhoc());
     }
 
     void assertReservationEqualsAddReservationDTO(Reservation reservation, AddReservationDTO addReservationDTO) {
@@ -72,7 +72,6 @@ class ReservationServiceTest {
         assertEquals(reservation.getEndDate(), (Long) addReservationDTO.getEndDate());
         assertEquals(reservation.getUser(), addReservationDTO.getUser());
         assertEquals(reservation.getWorkplace().getId(), (Long) addReservationDTO.getWorkplaceId());
-        assertEquals(reservation.isAdhoc(), addReservationDTO.getAdhoc());
     }
 
 
@@ -99,9 +98,10 @@ class ReservationServiceTest {
     @Test
     void getDailyReservationsTest() {
         Workplace workplace2 = new Workplace("secondPlace", 1, 2, "mapId");
+        workplace2.setEquipment("Zwei Bildschirme");
         workplaceRepository.save(workplace2);
-        Reservation reservationBefore = new Reservation(currentDay, currentDay, workplace, "Max", false);
-        Reservation reservationAfter = new Reservation(currentDay, currentDay, workplace2, "Moritz", true);
+        Reservation reservationBefore = new Reservation(currentDay, currentDay, workplace, "Max");
+        Reservation reservationAfter = new Reservation(currentDay, currentDay, workplace2, "Moritz");
         reservationRepository.saveAll(asList(reservationBefore, reservationAfter));
         List<ReservationDTO> reservationDTOList = reservationService.getDailyReservations(DateUtility.startOfDay(new Date()));
 
@@ -338,7 +338,7 @@ class ReservationServiceTest {
 
     @Test
     void addReservationTest() {
-        Reservation reservation = new Reservation(100L, 200L, workplace, "sam", false);
+        Reservation reservation = new Reservation(100L, 200L, workplace, "sam");
         AddReservationDTO addReservationDTO = new AddReservationDTO(reservation);
         Principal principal = () -> "sam";
         reservationService.addReservation(addReservationDTO, principal);
@@ -352,7 +352,7 @@ class ReservationServiceTest {
     @Test
     void addReservationEndDateBeforeStartDateTest() {
         assertThrows(InvalidReservationException.class, () -> {
-            Reservation reservation = new Reservation(250L, 200L, workplace, "sam", false);
+            Reservation reservation = new Reservation(250L, 200L, workplace, "sam");
             AddReservationDTO addReservationDTO = new AddReservationDTO(reservation);
             Principal principal = () -> "sam";
             reservationService.addReservation(addReservationDTO, principal);
@@ -364,7 +364,7 @@ class ReservationServiceTest {
     void addReservationInvalidWorkplaceTest() {
         assertThrows(InvalidWorkplaceException.class, () -> {
             workplaceRepository.deleteAll(workplaceRepository.findAll());
-            Reservation reservation = new Reservation(150L, 200L, workplace, "sam", false);
+            Reservation reservation = new Reservation(150L, 200L, workplace, "sam");
             AddReservationDTO addReservationDTO = new AddReservationDTO(reservation);
             Principal principal = () -> "sam";
             reservationService.addReservation(addReservationDTO, principal);
@@ -375,7 +375,7 @@ class ReservationServiceTest {
     void addConflictingReservationTest() {
         assertThrows(AlreadyExistsException.class, () -> {
             createAndSaveReservations();
-            Reservation reservation = new Reservation(100L, 200L, workplace, "sam", false);
+            Reservation reservation = new Reservation(100L, 200L, workplace, "sam");
             AddReservationDTO addReservationDTO = new AddReservationDTO(reservation);
             Principal principal = () -> "sam";
             reservationService.addReservation(addReservationDTO, principal);
@@ -464,55 +464,5 @@ class ReservationServiceTest {
         assertTrue(reservationRepository.findAll().contains(reservationLimit1));
     }
 
-    /*
-     *Adhoc Methods Testing
-     */
 
-    @Test
-    void reserveAdhocTest() {
-        reservationService.reserveAdhoc(workplace.getId());
-        List<Reservation> reservationList = reservationRepository.findAll();
-
-        assertEquals(1, reservationList.size());
-        Reservation actual = reservationList.get(0);
-        assertEquals(workplace, actual.getWorkplace());
-    }
-
-    @Test
-    void reserveAdhocConflictingTest() {
-        assertThrows(AlreadyExistsException.class, () -> {
-            createAndSaveReservations();
-            Reservation reserveToday = new Reservation(now, workplace, "Sascha");
-            reservationRepository.save(reserveToday);
-            reservationService.reserveAdhoc(workplace.getId());
-        });
-    }
-
-
-    @Test
-    void removeAdhocNormalTest() {
-        Reservation reserveToday = new Reservation(currentDay, currentDay, workplace, "Sascha", true);
-        reservationRepository.save(reserveToday);
-        reservationService.removeAdhoc(workplace.getId());
-        List<Reservation> reservationList = reservationRepository.findAll();
-        assertEquals(0, reservationList.size());
-    }
-
-
-    @Test
-    void removeAdhocNonExistingTest() {
-        assertThrows(DoesNotExistException.class, () -> {
-            reservationService.removeAdhoc(workplace.getId());
-        });
-    }
-
-
-    @Test
-    void removeAdhocNonAdhocTest() {
-        assertThrows(InvalidReservationException.class, () -> {
-            Reservation reserveToday = new Reservation(currentDay, workplace, "Sascha");
-            reservationRepository.save(reserveToday);
-            reservationService.removeAdhoc(workplace.getId());
-        });
-    }
 }
