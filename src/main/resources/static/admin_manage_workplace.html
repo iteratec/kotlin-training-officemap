@@ -91,19 +91,22 @@
                     <label for="workplaceEquipment">Ausstattung: </label>
                     <input type="text" class="form-control" id="workplaceEquipment" required="">
 
-                    <label for="workplaceX">X: </label>
+                    <label for="workplaceX">X-Koordinate: </label>
                     <input type="text" class="form-control" id="workplaceX" required="">
 
 
-                    <label for="workplaceY">Y: </label>
+                    <label for="workplaceY">Y-Koordinate: </label>
                     <input type="text" class="form-control" id="workplaceY" required="">
 
                     <br>
 
                     <input type="submit" class="btn btn-default" id="submitWorkplace"
                            value="Änderungen bestätigen" onclick="setChanges()" />
+                    <br>
 
+                    <div id="message" style="color: red"></div>
                 </div>
+
                 <div class="col-md-9 col-lg-9">
                     <h4>Büroplan:</h4>
                     <div class="office pre-scrollable" id="image"></div>

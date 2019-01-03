@@ -26,6 +26,13 @@ function workplaceInitializer(workplaces) {
 }
 
 function setChanges() {
+    var message = $("#message");
+    message.html("");
+
+    if(!selWorkplaceId){
+        message.html("Bitte einen Arbeitsplatz auswählen!");
+        return;
+    }
 
     var workplace = {
         id: selWorkplaceId,
@@ -35,6 +42,16 @@ function setChanges() {
         mapId: "frankfurt_office",
         equipment: ($("#workplaceEquipment").val())
     };
+
+    if(workplace.name == ""){
+        message.html("Der Name eines Arbeitsplatzes darf nicht leer sein!");
+        return;
+    }
+
+    if(isNaN(workplace.x) || isNaN(workplace.y) || workplace.x == "" || workplace.y == ""){
+        message.html("Die Koordinaten eines Arbeitsplatzes müssen eine Nummer sein!");
+        return;
+    }
 
     $.ajax({
         url: "/api/updateworkplace",
