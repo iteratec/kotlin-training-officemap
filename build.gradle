@@ -35,7 +35,7 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.0.3.RELEASE'
     compile 'org.springframework.boot:spring-boot-starter-security:2.0.3.RELEASE'
     compile 'org.springframework.boot:spring-boot-starter-actuator:2.0.3.RELEASE'
-    //compile 'org.springframework.boot:spring-boot-devtools:2.0.3.RELEASE'
+    compile 'org.springframework.boot:spring-boot-devtools:2.0.3.RELEASE'
     compile 'org.springframework:spring-tx'
     compile 'io.springfox:springfox-swagger2:2.9.2'
     compile 'io.springfox:springfox-swagger-ui:2.9.2'

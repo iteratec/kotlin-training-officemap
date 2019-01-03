@@ -68,8 +68,7 @@
 										löschen</a></li>
 								<li><a href="/admin_delete_reservation.html">Reservierungen
 										löschen</a></li>
-								<li><a href="/admin_manage_equipment.html">Equipment
-									verwalten</a></li>
+								<li><a href="/admin_manage_workplace.html">Arbeitsplätze verwalten</a></li>
 								<li><a class="logout" href="/logout"><span class="glyphicon glyphicon-log-out"></span> Ausloggen</a></li>
 							</ul>
 						</div>
@@ -90,6 +89,8 @@
 								class="form-control" id="yCoordinate" value="0" required>
 							<label for="workplaceName">Arbeitsplatzname: </label><input
 								type="text" class="form-control" id="workplaceName" required>
+							<label for="workplaceEquipment">Ausstattung: </label><input
+								type="text" class="form-control" id="workplaceEquipment" required>
 							<br> <input type="submit" class="btn btn-default"
 										id="submitWorkplace" value="Arbeitsplatz erstellen"
 										onclick="addNewWorkplace()" />

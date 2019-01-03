@@ -41,8 +41,8 @@ function addNewWorkplace() {
     var message = $("#message");
     message.html("");
     var workplace = {
-        name: ($("#workplaceName").val()),
         equipment: ($("#workplaceEquipment").val()),
+        name: ($("#workplaceName").val()),
         x: ($("#xCoordinate").val() - 9),
         y: ($("#yCoordinate").val() - 9),
         mapId: "frankfurt_office" //TODO choose mapId

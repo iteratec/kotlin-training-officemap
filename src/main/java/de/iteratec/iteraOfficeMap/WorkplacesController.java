@@ -47,4 +47,11 @@ public class WorkplacesController {
     public void deleteWorkplace(@RequestBody DeleteWorkplaceDTO workplace) {
         workplaceService.deleteWorkplace(workplace);
     }
+
+    @ApiOperation(value = "updateWorkplace", notes = "Updates one workplace in the database.")
+    @RequestMapping(method = RequestMethod.PUT, value = "/updateworkplace", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = 406, message = "Entry does not exists")})
+    public void updateWorkplace(@RequestBody UpdateWorkplaceDTO workplace) {
+        workplaceService.updateWorkplace(workplace);
+    }
 }

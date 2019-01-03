@@ -1,5 +1,7 @@
 var workplaces = null;
 var selWorkplace = null;
+var selWorkplaceId = null;
+
 
 //on document ready call initialize
 $(document).ready(function () {
@@ -20,22 +22,28 @@ function initialize() {
 }
 
 function workplaceInitializer(workplaces) {
-    buildMap("/images/delete.png", false, true, true, workplaces);
-
+    buildMap("/images/equipment.png", false, true, true, workplaces);
 }
 
-//http request to delete one workplace from the database
-function deleteWorkplace() {
+function setChanges() {
+
+    var workplace = {
+        id: selWorkplaceId,
+        name: ($("#workplaceName").val()),
+        x: ($("#workplaceX").val()),
+        y: ($("#workplaceY").val()),
+        mapId: "frankfurt_office",
+        equipment: ($("#workplaceEquipment").val())
+    };
+
     $.ajax({
-        url: "/api/deleteworkplace",
+        url: "/api/updateworkplace",
         beforeSend: function (xhr) {
             xhr.overrideMimeType("text/plain; charset=x-user-defined");
         },
-        type: "DELETE",
+        type: "PUT",
         contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({
-            id: selWorkplace
-        }),
+        data: JSON.stringify(workplace),
         success: function (response) {
             initialize();
         }
@@ -43,24 +51,19 @@ function deleteWorkplace() {
         alert("error");
     });
 }
-
-// shows pop up to confirm deletion
-function clickedDelete() {
-    if (confirm("Soll der Arbeitsplatz endgültig gelöscht werden?")) {
-        deleteWorkplace();
-    } else {
-        return false;
-    }
-}
-
-
 //lets a workplace pulse on click and saves the ID to selWorkplace
 function pulseOnClick(workplaceImg) {
     workplaceImg.click(function () {
         $('.pulsation').toggleClass('pulsation');
-        selWorkplace = $(this).data("workplaceId");
         var selWorkplaceName = $(this).data("workplaceName");
-        document.getElementById("selectedWorkplace").innerHTML = selWorkplaceName;
+        var selWorkplaceEquipment = $(this).data("workplaceEquipment");
+        var selWorkplaceX = $(this).data("x");
+        var selWorkplaceY = $(this).data("y");
+        selWorkplaceId = $(this).data("workplaceId");
+        document.getElementById("workplaceName").value = selWorkplaceName;
+        document.getElementById("workplaceEquipment").value = selWorkplaceEquipment;
+        document.getElementById("workplaceX").value = selWorkplaceX;
+        document.getElementById("workplaceY").value = selWorkplaceY;
         $(this).addClass("pulsation");
     });
 }

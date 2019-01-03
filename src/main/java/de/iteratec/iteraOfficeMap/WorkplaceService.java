@@ -6,10 +6,7 @@ import de.iteratec.iteraOfficeMap.utility.DateUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class WorkplaceService {
@@ -60,7 +57,7 @@ public class WorkplaceService {
         if (existingWorkplace == null) {
 
             workplaceRepository.save(new Workplace(workplace.name,
-                    workplace.x, workplace.y, workplace.mapId));
+                    workplace.x, workplace.y, workplace.mapId, workplace.equipment));
         } else {
             throw new AlreadyExistsException();
         }
@@ -75,5 +72,11 @@ public class WorkplaceService {
             throw new DoesNotExistException();
         }
 
+    }
+
+    public void updateWorkplace(UpdateWorkplaceDTO workplace){
+        Workplace updateWorkplace =  new Workplace(workplace.getName(),workplace.getX(),workplace.getY(),workplace.getMapId(),workplace.getEquipment());
+        updateWorkplace.setId(workplace.getId());
+        workplaceRepository.save(updateWorkplace);
     }
 }

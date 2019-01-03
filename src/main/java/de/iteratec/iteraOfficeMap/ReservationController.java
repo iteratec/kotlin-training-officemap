@@ -34,6 +34,13 @@ public class ReservationController {
         reservationService.addReservation(reservation, principal);
     }
 
+    @ApiOperation(value = "addReservations", notes = "Adds a list of reservations to the database.")
+    @RequestMapping(method = RequestMethod.POST, value = "/addreservations", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {@ApiResponse(code = 406, message = "Entry already exists")})
+    public void addReservations(@RequestBody List<AddReservationDTO> reservations, Principal principal) {
+        reservationService.addReservations(reservations, principal);
+    }
+
     @ApiOperation(value = "getDailyReservations", notes = "Returns a list of reservations for exactly one day.")
     @RequestMapping(method = RequestMethod.GET, value = "/getdailyreservations")
     public List<ReservationDTO> getDailyReservations(@RequestParam Long date) {

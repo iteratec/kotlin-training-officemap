@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta name="viewport" content="width=device-width , initial-scale=1" charset="utf-8">
-    <title>Equipment verwalten</title>
+    <title>Arbeitsplätze verwalten</title>
     <link rel="stylesheet" href="/jqueryui/jquery-ui.css">
     <script src="jqueryui/external/jquery/jquery.js"></script>
     <script src="jqueryui/jquery-ui.js"></script>
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="/css/customstyle.css" />
 
     <script type="text/javascript" src="js/DateUtils.js"></script>
-    <script type="text/javascript" src="js/admin_manage_equipment.js"></script>
+    <script type="text/javascript" src="js/admin_manage_workplace.js"></script>
 
 </head>
 <body>
@@ -71,8 +71,7 @@
                                 löschen</a></li>
                             <li><a href="/admin_delete_reservation.html">Reservierungen
                                 löschen</a></li>
-                            <li class="active"><a href="/admin_manage_equipment.html">Equipment
-                                verwalten</a></li>
+                            <li class="active"><a href="/admin_manage_workplace.html">Arbeitsplätze verwalten</a></li>
                             <li><a class="logout" href="/logout"><span class="glyphicon glyphicon-log-out"></span> Ausloggen</a></li>
                         </ul>
                     </div>
@@ -82,18 +81,27 @@
         <div id="maincontent" class="col-sm-8 col-md-9 col-lg-10">
             <div class="row content">
                 <div class="col-md-3 col-lg-3">
-                    <h4>Equipment eines Arbeitsplatzes verwalten:</h4>
-                    <p>Um das Equipment eines Arbeitsplatzes zu verwalten, den entsprechenden Platz in der Grafik
-                       makieren und das Equipment im Textfeld anpassen.
+                    <h4>Einen Arbeitsplatzes verwalten:</h4>
+                    <p>Um eine Arbeitsplatz zu verwalten, den entsprechenden Platz in der Grafik
+                       makieren und die Eigenschaften in den Textfeldern anpassen.
                     </p>
+                    <label for="workplaceName">Ausgewählter Arbeitsplatz: </label>
+                    <input type="text" class="form-control" id="workplaceName" required="">
 
-                    <h5>
-                        Ausgewählter Arbeitsplatz: <span id="selectedWorkplace">
-										- </span>
-                    </h5>
+                    <label for="workplaceEquipment">Ausstattung: </label>
+                    <input type="text" class="form-control" id="workplaceEquipment" required="">
+
+                    <label for="workplaceX">X: </label>
+                    <input type="text" class="form-control" id="workplaceX" required="">
+
+
+                    <label for="workplaceY">Y: </label>
+                    <input type="text" class="form-control" id="workplaceY" required="">
+
+                    <br>
 
                     <input type="submit" class="btn btn-default" id="submitWorkplace"
-                           value="Equipment anpassen" onclick="manageEquipment()" />
+                           value="Änderungen bestätigen" onclick="setChanges()" />
 
                 </div>
                 <div class="col-md-9 col-lg-9">

@@ -286,6 +286,10 @@ function buildPeriodMap() {
 		workplaceImg.attr("id", workplaces[i].id);
 		workplaceImg.data("workplaceId", workplaces[i].id);
 		workplaceImg.data("workplaceName", workplaces[i].name);
+		workplaceImg.data("workplaceEquipment",workplaces[i].equipment);
+		workplaceImg.data("x",workplaces[i].x);
+		workplaceImg.data("y",workplaces[i].y);
+		workplaceImg.data("workplaceId", workplaces[i].id);
 
 		workplaceImg.attr("data-toggle", "tooltip");
 				
@@ -335,8 +339,10 @@ function pulseOnClick(workplaceImg) {
 				selWorkplace = $(this).data("workplaceId");
 				$('.pulsation').toggleClass('pulsation');
 				var selWorkplaceName = $(this).data("workplaceName");
+				var selWorkplaceEquipment = $(this).data("workplaceEquipment");
 				document.getElementById("selectedWorkplace").innerHTML = selWorkplaceName;
-				$(this).addClass("pulsation");
+                document.getElementById("selectedWorkplaceEquipment").innerHTML = selWorkplaceEquipment;
+                $(this).addClass("pulsation");
 				if ($(this).data("status") == "available") {	
 					selectedStatus = "available";
 				} else {

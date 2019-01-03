@@ -23,15 +23,6 @@ public class Workplace {
         this.setName(name);
     }
 
-    public Workplace(String name, int x, int y, String mapId) {
-        super();
-        this.name = name;
-        this.x = x;
-        this.y = y;
-        this.mapId = mapId;
-        this.equipment = "";
-    }
-
     public Workplace(String name, int x, int y, String mapId, String equipment) {
         super();
         this.name = name;

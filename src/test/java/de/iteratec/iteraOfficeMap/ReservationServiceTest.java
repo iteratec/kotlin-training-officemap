@@ -70,7 +70,6 @@ class ReservationServiceTest {
 
         assertEquals(reservation.getStartDate(), (Long) addReservationDTO.getStartDate());
         assertEquals(reservation.getEndDate(), (Long) addReservationDTO.getEndDate());
-        assertEquals(reservation.getUser(), addReservationDTO.getUser());
         assertEquals(reservation.getWorkplace().getId(), (Long) addReservationDTO.getWorkplaceId());
     }
 
@@ -97,8 +96,7 @@ class ReservationServiceTest {
 
     @Test
     void getDailyReservationsTest() {
-        Workplace workplace2 = new Workplace("secondPlace", 1, 2, "mapId");
-        workplace2.setEquipment("Zwei Bildschirme");
+        Workplace workplace2 = new Workplace("secondPlace", 1, 2, "mapId", "Zwei Bildschirme");
         workplaceRepository.save(workplace2);
         Reservation reservationBefore = new Reservation(currentDay, currentDay, workplace, "Max");
         Reservation reservationAfter = new Reservation(currentDay, currentDay, workplace2, "Moritz");

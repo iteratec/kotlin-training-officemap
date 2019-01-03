@@ -87,10 +87,13 @@ function buildMap(imageSrc, imageID, wpID, pulse, workplaces){
         workplaceImg.css("top", workplaces[i].y + "px");
 		workplaceImg.data("workplaceName", workplaces[i].name);
 		workplaceImg.data("workplaceEquipment", workplaces[i].equipment);
+		workplaceImg.data("x",workplaces[i].x);
+		workplaceImg.data("y",workplaces[i].y);
 
         if(wpID){
             workplaceImg.data("workplaceId", workplaces[i].id);
         }
+
         if(pulse){
             pulseOnClick(workplaceImg);
         }
