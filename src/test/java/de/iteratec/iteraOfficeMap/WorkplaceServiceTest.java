@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-public class WorkplaceServiceTest {
+class WorkplaceServiceTest {
 
     @Autowired
     private ReservationRepository reservationRepository;
@@ -37,10 +37,10 @@ public class WorkplaceServiceTest {
     private Long currentDay = DateUtility.startOfDay(new Date());
 
     private void createAndSaveWorkplaces() {
-        workplace1 = new Workplace("First", 1, 1, "mapId","Zwei Bildschirme");
-        workplace2 = new Workplace("Second", 2, 2, "mapId","Zwei Bildschirme");
-        workplace3 = new Workplace("Third", 3, 3, "mapId","Zwei Bildschirme");
-        workplace4 = new Workplace("Fourth", 4, 4, "mapId","Zwei Bildschirme");
+        workplace1 = new Workplace("First", 1, 1, "mapId", "Zwei Bildschirme");
+        workplace2 = new Workplace("Second", 2, 2, "mapId", "Zwei Bildschirme");
+        workplace3 = new Workplace("Third", 3, 3, "mapId", "Zwei Bildschirme");
+        workplace4 = new Workplace("Fourth", 4, 4, "mapId", "Zwei Bildschirme");
         workplaceRepository.saveAll(asList(workplace1, workplace2, workplace3));
     }
 
@@ -88,7 +88,7 @@ public class WorkplaceServiceTest {
 
     @Test
     void getStatusOfFreeWorkplaceTest() {
-        workplace4 = new Workplace("fourth", 4, 4, "mapId","Zwei Bildschirme");
+        workplace4 = new Workplace("fourth", 4, 4, "mapId", "Zwei Bildschirme");
         workplaceRepository.save(workplace4);
 
         assertEquals(Status.FREE, workplaceService.getStatus(workplace4.getId()));
@@ -96,7 +96,7 @@ public class WorkplaceServiceTest {
 
     @Test
     void getStatusOfNonAdhocReservedTest() {
-        workplace4 = new Workplace("fourth", 4, 4, "mapId","Zwei Bildschirme");
+        workplace4 = new Workplace("fourth", 4, 4, "mapId", "Zwei Bildschirme");
         workplaceRepository.save(workplace4);
         Reservation reserveToday = new Reservation(currentDay, workplace4, "Sascha");
         reservationRepository.save(reserveToday);
@@ -107,8 +107,8 @@ public class WorkplaceServiceTest {
     @Test
     void addAlreadyExistingWorkPlaceWithSameCoordinates() {
         Assertions.assertThrows(AlreadyExistsException.class, () -> {
-            workplace4 = new Workplace("fourth", 4, 4, "mapId","Zwei Bildschirme");
-            workplace3 = new Workplace("third", 4, 4, "mapId","Zwei Bildschirme");
+            workplace4 = new Workplace("fourth", 4, 4, "mapId", "Zwei Bildschirme");
+            workplace3 = new Workplace("third", 4, 4, "mapId", "Zwei Bildschirme");
             AddWorkplaceDTO addWorkplaceDTO = new AddWorkplaceDTO(workplace4);
             AddWorkplaceDTO addWorkplaceDTONew = new AddWorkplaceDTO(workplace3);
             workplaceService.addNewWorkplace(addWorkplaceDTO);
@@ -119,8 +119,8 @@ public class WorkplaceServiceTest {
     @Test
     void addAlreadyExistingWorkPlaceWithSameName() {
         Assertions.assertThrows(AlreadyExistsException.class, () -> {
-            workplace4 = new Workplace("fourth", 4, 4, "mapId","Zwei Bildschirme");
-            workplace3 = new Workplace("fourth", 3, 3, "mapId","Zwei Bildschirme");
+            workplace4 = new Workplace("fourth", 4, 4, "mapId", "Zwei Bildschirme");
+            workplace3 = new Workplace("fourth", 3, 3, "mapId", "Zwei Bildschirme");
             AddWorkplaceDTO addWorkplaceDTO = new AddWorkplaceDTO(workplace4);
             AddWorkplaceDTO addWorkplaceDTONew = new AddWorkplaceDTO(workplace3);
             workplaceService.addNewWorkplace(addWorkplaceDTO);

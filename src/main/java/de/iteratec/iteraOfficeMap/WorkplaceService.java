@@ -6,10 +6,14 @@ import de.iteratec.iteraOfficeMap.utility.DateUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 @Service
 public class WorkplaceService {
+
     @Autowired
     private WorkplaceRepository workplaceRepository;
 
@@ -35,7 +39,6 @@ public class WorkplaceService {
      * @return 0 if free, 1 if adhoc Reserved and 2 if reserved normally
      */
     public Status getStatus(Long workplaceID) {
-        //macAddress = MacAddressValidator.convertMac(macAddress);
         Workplace workplace = workplaceRepository.findById(workplaceID).get();
 
         Long date = DateUtility.startOfDay(new Date());
@@ -43,8 +46,7 @@ public class WorkplaceService {
                 .findByStartDateEqualsAndWorkplace(date, workplace);
         if (reservation == null) {
             return Status.FREE;
-        }
-         else {
+        } else {
             return Status.NORMALRESERVATION;
         }
     }
@@ -55,9 +57,8 @@ public class WorkplaceService {
                 workplaceRepository.findByXEqualsAndYEqualsOrNameEquals(workplace.getX(), workplace.getY(), workplace.getName());
 
         if (existingWorkplace == null) {
-
-            workplaceRepository.save(new Workplace(workplace.name,
-                    workplace.x, workplace.y, workplace.mapId, workplace.equipment));
+            workplaceRepository.save(new Workplace(workplace.getName(),
+                    workplace.getX(), workplace.getY(), workplace.getMapId(), workplace.getEquipment()));
         } else {
             throw new AlreadyExistsException();
         }
@@ -74,9 +75,10 @@ public class WorkplaceService {
 
     }
 
-    public void updateWorkplace(UpdateWorkplaceDTO workplace){
-        Workplace updateWorkplace =  new Workplace(workplace.getName(),workplace.getX(),workplace.getY(),workplace.getMapId(),workplace.getEquipment());
+    public void updateWorkplace(UpdateWorkplaceDTO workplace) {
+        Workplace updateWorkplace = new Workplace(workplace.getName(), workplace.getX(), workplace.getY(), workplace.getMapId(), workplace.getEquipment());
         updateWorkplace.setId(workplace.getId());
         workplaceRepository.save(updateWorkplace);
     }
+
 }

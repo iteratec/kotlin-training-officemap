@@ -1,13 +1,11 @@
 package de.iteratec.iteraOfficeMap;
 
 import de.iteratec.iteraOfficeMap.exceptions.*;
-import de.iteratec.iteraOfficeMap.utility.DateUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -234,7 +232,6 @@ public class ReservationService {
             }
         }
     }
-
 
 
 }

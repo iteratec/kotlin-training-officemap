@@ -48,9 +48,9 @@ public class Reservation {
         Reservation that = (Reservation) o;
         return
                 Objects.equals(startDate, that.startDate) &&
-                Objects.equals(endDate, that.endDate) &&
-                Objects.equals(username, that.username) &&
-                Objects.equals(workplace, that.workplace);
+                        Objects.equals(endDate, that.endDate) &&
+                        Objects.equals(username, that.username) &&
+                        Objects.equals(workplace, that.workplace);
     }
 
     @Override
