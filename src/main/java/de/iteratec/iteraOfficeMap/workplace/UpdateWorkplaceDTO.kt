@@ -1,4 +1,4 @@
-package de.iteratec.iteraOfficeMap
+package de.iteratec.iteraOfficeMap.workplace
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

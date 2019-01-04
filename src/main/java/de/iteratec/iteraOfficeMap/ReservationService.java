@@ -1,6 +1,8 @@
 package de.iteratec.iteraOfficeMap;
 
 import de.iteratec.iteraOfficeMap.exceptions.*;
+import de.iteratec.iteraOfficeMap.workplace.Workplace;
+import de.iteratec.iteraOfficeMap.workplace.WorkplaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

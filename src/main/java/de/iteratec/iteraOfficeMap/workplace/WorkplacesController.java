@@ -1,4 +1,4 @@
-package de.iteratec.iteraOfficeMap;
+package de.iteratec.iteraOfficeMap.workplace;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

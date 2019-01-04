@@ -1,5 +1,6 @@
 package de.iteratec.iteraOfficeMap;
 
+import de.iteratec.iteraOfficeMap.workplace.Workplace;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 

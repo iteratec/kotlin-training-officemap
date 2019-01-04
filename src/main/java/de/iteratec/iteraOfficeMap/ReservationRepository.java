@@ -1,5 +1,6 @@
 package de.iteratec.iteraOfficeMap;
 
+import de.iteratec.iteraOfficeMap.workplace.Workplace;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 

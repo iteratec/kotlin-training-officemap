@@ -1,5 +1,7 @@
 package de.iteratec.iteraOfficeMap;
 
+import de.iteratec.iteraOfficeMap.workplace.Workplace;
+
 public class ReservationDTO {
 
     public ReservationDTO(Reservation reservation) {

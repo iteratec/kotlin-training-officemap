@@ -1,4 +1,4 @@
-package de.iteratec.iteraOfficeMap;
+package de.iteratec.iteraOfficeMap.workplace;
 
 import javax.persistence.*;
 import java.util.Objects;

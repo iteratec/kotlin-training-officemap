@@ -1,5 +1,8 @@
-package de.iteratec.iteraOfficeMap;
+package de.iteratec.iteraOfficeMap.workplace;
 
+import de.iteratec.iteraOfficeMap.Reservation;
+import de.iteratec.iteraOfficeMap.ReservationRepository;
+import de.iteratec.iteraOfficeMap.Status;
 import de.iteratec.iteraOfficeMap.exceptions.AlreadyExistsException;
 import de.iteratec.iteraOfficeMap.exceptions.DoesNotExistException;
 import de.iteratec.iteraOfficeMap.utility.DateUtility;
