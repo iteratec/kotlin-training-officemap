@@ -1,4 +1,4 @@
-package de.iteratec.iteraOfficeMap
+package de.iteratec.iteraOfficeMap.reservation
 
 data class AddReservationDTO(val workplaceId: Long,
                              val startDate: Long,

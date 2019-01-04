@@ -1,8 +1,8 @@
 package de.iteratec.iteraOfficeMap.workplace;
 
-import de.iteratec.iteraOfficeMap.Reservation;
-import de.iteratec.iteraOfficeMap.ReservationRepository;
-import de.iteratec.iteraOfficeMap.Status;
+import de.iteratec.iteraOfficeMap.reservation.Reservation;
+import de.iteratec.iteraOfficeMap.reservation.ReservationRepository;
+import de.iteratec.iteraOfficeMap.reservation.ReservationStatus;
 import de.iteratec.iteraOfficeMap.exceptions.AlreadyExistsException;
 import de.iteratec.iteraOfficeMap.exceptions.DoesNotExistException;
 import de.iteratec.iteraOfficeMap.utility.DateUtility;
@@ -96,7 +96,7 @@ class WorkplaceServiceTest {
         workplace4 = new Workplace("fourth", 4, 4, "mapId", "Zwei Bildschirme");
         workplaceRepository.save(workplace4);
 
-        assertEquals(Status.FREE, workplaceService.getStatus(workplace4.getId()));
+        assertEquals(ReservationStatus.FREE, workplaceService.getStatus(workplace4.getId()));
     }
 
     @Test
@@ -106,7 +106,7 @@ class WorkplaceServiceTest {
         Reservation reserveToday = new Reservation(currentDay, workplace4, "Sascha");
         reservationRepository.save(reserveToday);
 
-        assertEquals(Status.NORMALRESERVATION, workplaceService.getStatus(workplace4.getId()));
+        assertEquals(ReservationStatus.NORMALRESERVATION, workplaceService.getStatus(workplace4.getId()));
     }
 
     @Test

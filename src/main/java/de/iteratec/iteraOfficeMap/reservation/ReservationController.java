@@ -1,4 +1,4 @@
-package de.iteratec.iteraOfficeMap;
+package de.iteratec.iteraOfficeMap.reservation;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

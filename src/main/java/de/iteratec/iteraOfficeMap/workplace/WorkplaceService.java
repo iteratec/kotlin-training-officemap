@@ -1,8 +1,8 @@
 package de.iteratec.iteraOfficeMap.workplace;
 
-import de.iteratec.iteraOfficeMap.Reservation;
-import de.iteratec.iteraOfficeMap.ReservationRepository;
-import de.iteratec.iteraOfficeMap.Status;
+import de.iteratec.iteraOfficeMap.reservation.Reservation;
+import de.iteratec.iteraOfficeMap.reservation.ReservationRepository;
+import de.iteratec.iteraOfficeMap.reservation.ReservationStatus;
 import de.iteratec.iteraOfficeMap.exceptions.AlreadyExistsException;
 import de.iteratec.iteraOfficeMap.exceptions.DoesNotExistException;
 import de.iteratec.iteraOfficeMap.utility.DateUtility;
@@ -41,16 +41,16 @@ public class WorkplaceService {
      * @param workplaceID
      * @return 0 if free, 1 if adhoc Reserved and 2 if reserved normally
      */
-    public Status getStatus(Long workplaceID) {
+    public ReservationStatus getStatus(Long workplaceID) {
         Workplace workplace = workplaceRepository.findById(workplaceID).get();
 
         Long date = DateUtility.startOfDay(new Date());
         Reservation reservation = reservationRepository
                 .findByStartDateEqualsAndWorkplace(date, workplace);
         if (reservation == null) {
-            return Status.FREE;
+            return ReservationStatus.FREE;
         } else {
-            return Status.NORMALRESERVATION;
+            return ReservationStatus.NORMALRESERVATION;
         }
     }
 

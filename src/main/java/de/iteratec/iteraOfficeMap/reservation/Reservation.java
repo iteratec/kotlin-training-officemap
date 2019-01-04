@@ -1,4 +1,4 @@
-package de.iteratec.iteraOfficeMap;
+package de.iteratec.iteraOfficeMap.reservation;
 
 import de.iteratec.iteraOfficeMap.workplace.Workplace;
 import org.hibernate.annotations.OnDelete;
