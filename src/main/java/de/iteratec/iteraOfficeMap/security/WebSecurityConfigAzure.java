@@ -1,6 +1,7 @@
 package de.iteratec.iteraOfficeMap.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,6 +12,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Profile("prod")
 public class WebSecurityConfigAzure extends WebSecurityConfigurerAdapter {
 
     private final OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService;
@@ -39,3 +41,4 @@ public class WebSecurityConfigAzure extends WebSecurityConfigurerAdapter {
     }
 
 }
+
