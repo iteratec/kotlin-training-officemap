@@ -24,14 +24,14 @@ repositories {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web:${Versions.springBoot}") {
+    compile("org.springframework.boot:spring-boot-starter-web") {
         exclude(module = "spring-boot-starter-tomcat")
     }
-    compile("org.springframework.boot:spring-boot-starter-jetty:${Versions.springBoot}")
-    compile("org.springframework.boot:spring-boot-starter-data-jpa:${Versions.springBoot}")
-    compile("org.springframework.boot:spring-boot-starter-security:${Versions.springBoot}")
-    compile("org.springframework.boot:spring-boot-starter-actuator:${Versions.springBoot}")
-    compile("org.springframework.boot:spring-boot-devtools:${Versions.springBoot}")
+    compile("org.springframework.boot:spring-boot-starter-jetty")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+    compile("org.springframework.boot:spring-boot-starter-security")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile("org.springframework.boot:spring-boot-devtools")
     compile("org.springframework:spring-tx")
     compile("io.springfox:springfox-swagger2:${Versions.swagger}")
     compile("io.springfox:springfox-swagger-ui:${Versions.swagger}")
