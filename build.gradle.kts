@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.model.AllOpen
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
@@ -8,13 +9,16 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${Versions.springBoot}")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${Versions.kotlin}")
+        classpath("org.jetbrains.kotlin:kotlin-noarg:${Versions.kotlin}")
     }
 }
 
 plugins {
     java
     kotlin("jvm") version Versions.kotlin
-    id("org.jetbrains.kotlin.plugin.spring") version Versions.kotlin
+    kotlin("plugin.spring") version Versions.kotlin
+    kotlin("plugin.allopen") version Versions.kotlin
+    kotlin("plugin.jpa") version Versions.kotlin
     id("org.springframework.boot") version Versions.springBoot
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
 }
@@ -51,15 +55,25 @@ dependencies {
     }
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+tasks {
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    jar {
+        archiveBaseName.set("office-map")
+        archiveVersion.set("0.1.0")
+    }
+
+    withType<Test> {
+        useJUnitPlatform()
+    }
 }
 
-tasks.jar {
-    archiveBaseName.set("office-map")
-    archiveVersion.set("0.1.0")
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
+allOpen {
+    annotations(
+            "javax.persistence.Entity",
+            "javax.persistence.MappedSuperclass",
+            "javax.persistence.Embeddable"
+    )
 }

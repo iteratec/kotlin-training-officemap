@@ -1,10 +1,10 @@
 package de.iteratec.iteraOfficeMap.workplace;
 
+import de.iteratec.iteraOfficeMap.exceptions.AlreadyExistsException;
+import de.iteratec.iteraOfficeMap.exceptions.DoesNotExistException;
 import de.iteratec.iteraOfficeMap.reservation.Reservation;
 import de.iteratec.iteraOfficeMap.reservation.ReservationRepository;
 import de.iteratec.iteraOfficeMap.reservation.ReservationStatus;
-import de.iteratec.iteraOfficeMap.exceptions.AlreadyExistsException;
-import de.iteratec.iteraOfficeMap.exceptions.DoesNotExistException;
 import de.iteratec.iteraOfficeMap.utility.DateUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

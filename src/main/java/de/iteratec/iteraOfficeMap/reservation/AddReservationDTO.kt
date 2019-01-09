@@ -5,7 +5,7 @@ data class AddReservationDTO(val workplaceId: Long,
                              val endDate: Long) {
 
     constructor(reservation: Reservation) : this(
-            reservation.workplace.id,
+            reservation.workplace.id!!,
             reservation.startDate,
             reservation.endDate
     )
