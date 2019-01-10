@@ -1,4 +1,4 @@
-image: openjdk:8-jdk
+image: paschenh/openjdk_dockerce
 
 cache:
   paths:
@@ -18,13 +18,6 @@ stages:
 
 gradle-build:
   stage: build
-  before_script:
-  - apt-get update
-  - apt-get -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
-  - curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg > /tmp/dkey; apt-key add /tmp/dkey
-  - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"
-  - apt-get update
-  - apt-get -y install docker-ce
   script:
   - docker run --rm --name test_db --publish 5532:5432 --env POSTGRES_PASSWORD=test_db --env POSTGRES_USER=test_db --detach postgres:10.5
   - ./gradlew check build
