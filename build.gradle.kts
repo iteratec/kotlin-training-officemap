@@ -65,7 +65,7 @@ tasks {
         archiveVersion.set("0.1.0")
     }
 
-    withType<Test> {
+    test {
         useJUnitPlatform()
     }
 }

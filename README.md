@@ -13,7 +13,7 @@ The goal of the iteraOfficeMap is to reduce the bottleneck at workstations by pr
 
 ## API-Interface
 
-The interfaces of the app are documented with [Swagger](https://office-map.cloudapps.iterashift.de/swagger-ui.html). Each individual interface can be viewed and tested here.
+The interfaces of the app are documented with [Swagger](https://office-map.cloudapps.iterashift.com/swagger-ui.html). Each individual interface can be viewed and tested here.
 
 
 ## Quick Start Guide (Developer)
