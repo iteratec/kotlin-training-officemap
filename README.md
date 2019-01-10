@@ -4,11 +4,11 @@ The goal of the iteraOfficeMap is to reduce the bottleneck at workstations by pr
 
 ### Important links
 
- - [Deployment](https://office-map.cloudapps.iterashift.de/)
+ - [Deployment](https://office-map.cloudapps.iterashift.com/)
  - [Git-Repository](https://iteragit.iteratec.de/studentsFRA/iteraOfficeMap/tree/master)
  - [Issue board](https://iteragit.iteratec.de/studentsFRA/iteraOfficeMap/boards)
  - [Mattermost](https://iterachat.iteratec.de/iteratec/channels/officemap)
- - [Openshift](https://cloudapps.iterashift.de:8443/console/project/office-map/overview)
+ - [Openshift](https://console.cloudapps.iterashift.com:8443/console/project/office-map/overview)
  - [Docker image in Artifactory](https://artifactory.iteratec.io/artifactory/webapp/#/artifacts/browse/tree/General/docker/office-map/office-map/latest)
 
 ## API-Interface
