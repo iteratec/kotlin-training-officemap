@@ -1,10 +1,10 @@
 package de.iteratec.iteraOfficeMap.workplace;
 
+import de.iteratec.iteraOfficeMap.exceptions.AlreadyExistsException;
+import de.iteratec.iteraOfficeMap.exceptions.DoesNotExistException;
 import de.iteratec.iteraOfficeMap.reservation.Reservation;
 import de.iteratec.iteraOfficeMap.reservation.ReservationRepository;
 import de.iteratec.iteraOfficeMap.reservation.ReservationStatus;
-import de.iteratec.iteraOfficeMap.exceptions.AlreadyExistsException;
-import de.iteratec.iteraOfficeMap.exceptions.DoesNotExistException;
 import de.iteratec.iteraOfficeMap.utility.DateUtility;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,12 +49,11 @@ class WorkplaceServiceTest {
         workplaceRepository.saveAll(asList(workplace1, workplace2, workplace3));
     }
 
-    void assertWorkplaceEqualsWorkplaceDTO(Workplace workplace, WorkplaceDTO workplaceDTO) {
-
-        // assertEquals(workplace.getId(),workplaceDTO.getId());
-        assertEquals(workplace.getName(), workplaceDTO.getName());
-        assertEquals(workplace.getX(), workplaceDTO.getX());
-        assertEquals(workplace.getY(), workplaceDTO.getY());
+    void assertWorkplaceEqualsWorkplace(Workplace workplace, Workplace workplace2) {
+        assertEquals(workplace.getName(), workplace2.getName());
+        assertEquals(workplace.getX(), workplace2.getX());
+        assertEquals(workplace.getY(), workplace2.getY());
+        assertEquals(workplace.getEquipment(), workplace2.getEquipment());
     }
 
     @BeforeEach
@@ -67,12 +66,12 @@ class WorkplaceServiceTest {
     @Test
     void getAllWorkplacesTest() {
         createAndSaveWorkplaces();
-        List<WorkplaceDTO> workplaceDTOList = workplaceService.getAllWorkplaces();
+        List<Workplace> workplaceList = workplaceService.getAllWorkplaces();
 
-        assertEquals(3, workplaceDTOList.size());
-        assertWorkplaceEqualsWorkplaceDTO(workplace1, workplaceDTOList.get(0));
-        assertWorkplaceEqualsWorkplaceDTO(workplace2, workplaceDTOList.get(1));
-        assertWorkplaceEqualsWorkplaceDTO(workplace3, workplaceDTOList.get(2));
+        assertEquals(3, workplaceList.size());
+        assertWorkplaceEqualsWorkplace(workplace1, workplaceList.get(0));
+        assertWorkplaceEqualsWorkplace(workplace2, workplaceList.get(1));
+        assertWorkplaceEqualsWorkplace(workplace3, workplaceList.get(2));
     }
 
     @Test
@@ -83,12 +82,11 @@ class WorkplaceServiceTest {
     @Test
     void addWorkPlaceTest() {
         workplace4 = new Workplace("Fourth", 4, 4, "mapId", "Zwei Bildschirme");
-        AddWorkplaceDTO addWorkplaceDTO = new AddWorkplaceDTO(workplace4);
-        workplaceService.addNewWorkplace(addWorkplaceDTO);
-        List<WorkplaceDTO> workplaceDTOList = workplaceService.getAllWorkplaces();
+        workplaceService.addNewWorkplace(workplace4);
+        List<Workplace> workplaceList = workplaceService.getAllWorkplaces();
 
-        assertEquals(1, workplaceDTOList.size());
-        assertWorkplaceEqualsWorkplaceDTO(workplace4, workplaceDTOList.get(0));
+        assertEquals(1, workplaceList.size());
+        assertWorkplaceEqualsWorkplace(workplace4, workplaceList.get(0));
     }
 
     @Test
@@ -114,10 +112,8 @@ class WorkplaceServiceTest {
         Assertions.assertThrows(AlreadyExistsException.class, () -> {
             workplace4 = new Workplace("fourth", 4, 4, "mapId", "Zwei Bildschirme");
             workplace3 = new Workplace("third", 4, 4, "mapId", "Zwei Bildschirme");
-            AddWorkplaceDTO addWorkplaceDTO = new AddWorkplaceDTO(workplace4);
-            AddWorkplaceDTO addWorkplaceDTONew = new AddWorkplaceDTO(workplace3);
-            workplaceService.addNewWorkplace(addWorkplaceDTO);
-            workplaceService.addNewWorkplace(addWorkplaceDTONew);
+            workplaceService.addNewWorkplace(workplace3);
+            workplaceService.addNewWorkplace(workplace4);
         });
     }
 
@@ -126,18 +122,15 @@ class WorkplaceServiceTest {
         Assertions.assertThrows(AlreadyExistsException.class, () -> {
             workplace4 = new Workplace("fourth", 4, 4, "mapId", "Zwei Bildschirme");
             workplace3 = new Workplace("fourth", 3, 3, "mapId", "Zwei Bildschirme");
-            AddWorkplaceDTO addWorkplaceDTO = new AddWorkplaceDTO(workplace4);
-            AddWorkplaceDTO addWorkplaceDTONew = new AddWorkplaceDTO(workplace3);
-            workplaceService.addNewWorkplace(addWorkplaceDTO);
-            workplaceService.addNewWorkplace(addWorkplaceDTONew);
+            workplaceService.addNewWorkplace(workplace4);
+            workplaceService.addNewWorkplace(workplace3);
         });
     }
 
     @Test
     void deleteWorkPlaceTest() {
         createAndSaveWorkplaces();
-        DeleteWorkplaceDTO deleteWorkplaceDTO = new DeleteWorkplaceDTO(workplace1.getId());
-        workplaceService.deleteWorkplace(deleteWorkplaceDTO);
+        workplaceService.deleteWorkplace(workplace1.getId());
         List<Workplace> workplaceList = workplaceRepository.findAll();
         assertEquals(2, workplaceList.size());
         assertEquals(workplace2, workplaceList.get(0));
@@ -149,8 +142,8 @@ class WorkplaceServiceTest {
         Assertions.assertThrows(DoesNotExistException.class, () -> {
             createAndSaveWorkplaces();
             workplaceRepository.deleteById(workplace1.getId());
-            DeleteWorkplaceDTO deleteWorkplaceDTO = new DeleteWorkplaceDTO(workplace1.getId());
-            workplaceService.deleteWorkplace(deleteWorkplaceDTO);
+            workplaceService.deleteWorkplace(workplace1.getId());
+
         });
     }
 }
