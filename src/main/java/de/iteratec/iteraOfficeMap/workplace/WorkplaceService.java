@@ -70,7 +70,7 @@ public class WorkplaceService {
 
     public void deleteWorkplace(DeleteWorkplaceDTO workplace) {
         try {
-            workplaceRepository.deleteById(workplace.id);
+            workplaceRepository.deleteById(workplace.getId());
         } catch (Exception e) {
             System.err.println(e.getMessage());
             throw new DoesNotExistException();

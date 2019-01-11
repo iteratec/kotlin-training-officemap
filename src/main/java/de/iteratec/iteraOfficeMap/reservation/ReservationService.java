@@ -42,7 +42,7 @@ public class ReservationService {
 
     private void addReservationDirect(AddReservationDTO addReservationDTO, Workplace workplace, Principal principal) {
         reservationRepository.save(new Reservation(addReservationDTO.getStartDate(),
-                addReservationDTO.getEndDate(), workplace, principal.getName()));
+                addReservationDTO.getEndDate(), principal.getName(), workplace));
     }
 
     private Workplace checkValidityAndGetWorkplace(AddReservationDTO addReservationDTO) {
@@ -199,10 +199,10 @@ public class ReservationService {
      * @throws DoesNotExistException
      */
     public void deleteReservation(DeleteReservationDTO deleteReservationDTO) {
-        Workplace workplace = workplaceRepository.findById(deleteReservationDTO.getworkplaceId()).orElseThrow(InvalidReservationException::new);
+        Workplace workplace = workplaceRepository.findById(deleteReservationDTO.getWorkplaceId()).orElseThrow(InvalidReservationException::new);
 
         Reservation reservation = reservationRepository.findByWorkplaceAndStartDateEqualsAndEndDateEquals(
-                workplaceRepository.findById(deleteReservationDTO.getworkplaceId()).get(),
+                workplaceRepository.findById(deleteReservationDTO.getWorkplaceId()).get(),
                 deleteReservationDTO.getStartDate(),
                 deleteReservationDTO.getEndDate());
 
@@ -211,7 +211,7 @@ public class ReservationService {
         }
 
         reservationRepository.deleteByWorkplaceAndStartDateAndEndDate(
-                workplaceRepository.findById(deleteReservationDTO.getworkplaceId()).get(),
+                workplaceRepository.findById(deleteReservationDTO.getWorkplaceId()).get(),
                 deleteReservationDTO.getStartDate(),
                 deleteReservationDTO.getEndDate());
     }

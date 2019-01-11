@@ -103,7 +103,7 @@ class WorkplaceServiceTest {
     void getStatusOfNonAdhocReservedTest() {
         workplace4 = new Workplace("fourth", 4, 4, "mapId", "Zwei Bildschirme");
         workplaceRepository.save(workplace4);
-        Reservation reserveToday = new Reservation(currentDay, workplace4, "Sascha");
+        Reservation reserveToday = new Reservation(currentDay, currentDay, "Sascha", workplace4);
         reservationRepository.save(reserveToday);
 
         assertEquals(ReservationStatus.NORMALRESERVATION, workplaceService.getStatus(workplace4.getId()));
