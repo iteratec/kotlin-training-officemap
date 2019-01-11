@@ -3,11 +3,11 @@ package de.iteratec.iteraOfficeMap.reservation
 import de.iteratec.iteraOfficeMap.workplace.Workplace
 
 class ReservationDTO(
-        var id: Long,
-        var date: Long,
-        var endDate: Long,
-        var user: String,
-        var workplace: Workplace
+        val id: Long,
+        val date: Long,
+        val endDate: Long,
+        val user: String,
+        val workplace: Workplace
 ) {
 
 

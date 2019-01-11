@@ -1,9 +1,9 @@
 package de.iteratec.iteraOfficeMap.reservation
 
 class DeleteReservationDTO(
-        var workplaceId: Long,
-        var startDate: Long,
-        var endDate: Long
+        val workplaceId: Long,
+        val startDate: Long,
+        val endDate: Long
 ) {
 
     constructor(reservation: Reservation) : this(

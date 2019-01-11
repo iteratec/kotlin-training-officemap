@@ -397,11 +397,11 @@ class ReservationServiceTest {
                 reservationService.addReservations(addReservationDTOList, principal);
             } catch (AlreadyExistsException e) {
                 assertEquals(1, reservationRepository.findAll().size());
-                Reservation repoReservation = reservationRepository.findByWorkplaceAndStartDateEqualsAndEndDateEquals(reservationMid.getWorkplace(),reservationMid.getStartDate(),reservationMid.getEndDate());
+                Reservation repoReservation = reservationRepository.findByWorkplaceAndStartDateEqualsAndEndDateEquals(reservationMid.getWorkplace(), reservationMid.getStartDate(), reservationMid.getEndDate());
 
-                assertTrue(reservationMid.getWorkplace().getId().equals(repoReservation.getWorkplace().getId()));
-                assertTrue(reservationMid.getStartDate() == repoReservation.getStartDate());
-                assertTrue(reservationMid.getEndDate() == repoReservation.getEndDate());
+                assertEquals(reservationMid.getWorkplace().getId(), repoReservation.getWorkplace().getId());
+                assertEquals(reservationMid.getStartDate(), repoReservation.getStartDate());
+                assertEquals(reservationMid.getEndDate(), repoReservation.getEndDate());
 
                 throw e;
             }
@@ -469,6 +469,5 @@ class ReservationServiceTest {
         assertEquals(1, reservationRepository.findAll().size());
         assertTrue(reservationRepository.findAll().contains(reservationLimit1));
     }
-
 
 }
