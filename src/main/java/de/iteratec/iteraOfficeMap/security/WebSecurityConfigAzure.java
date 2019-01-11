@@ -35,7 +35,7 @@ public class WebSecurityConfigAzure extends WebSecurityConfigurerAdapter {
                 .userInfoEndpoint()
                 .oidcUserService(oidcUserService);
 
-        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+        http.csrf().disable();
     }
 
 }
