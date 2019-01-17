@@ -350,7 +350,7 @@ function pulseOnClick(workplaceImg) {
             }
             initCalendar();
             inputChanged();
-            $('html, body').animate({scrollTop: 0}, 'slow');
+            document.getElementById("accordion").scrollIntoView({ behavior: 'smooth'});
         });
 
 
