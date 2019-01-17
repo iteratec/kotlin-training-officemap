@@ -53,7 +53,6 @@ function getUserReservations(callback) {
 	$.ajax({
 		url : "/api/getuserreservations?user=" + user,
 		type : "GET",
-		contentType : "text/plain; charset=utf-8",
 		success : function(response) {
 			userReservations = response;
 			callback.call();
@@ -95,9 +94,6 @@ function deleteReservations() {
 	$.ajax({
 		type : "DELETE",
 		url : "/api/deletereservations",
-		beforeSend : function(xhr) {
-			xhr.overrideMimeType("text/plain; charset=x-user-defined");
-		},
 		contentType : "application/json; charset=utf-8",
 		data : JSON.stringify(selectedReservations)
 	}).done(function() {

@@ -96,9 +96,6 @@ function postReservation() {
 	$.ajax({
 		type : "POST",
 		url : "/api/addreservations",
-		beforeSend : function(xhr) {
-			xhr.overrideMimeType("text/plain; charset=x-user-defined");
-		},
 		contentType : "application/json; charset=utf-8",
 		data : JSON.stringify(reservationList)
 	}).done(function() {
@@ -108,4 +105,3 @@ function postReservation() {
 		reservationList = [];
 	});
 }
-

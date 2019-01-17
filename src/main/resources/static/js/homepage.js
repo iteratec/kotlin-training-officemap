@@ -373,12 +373,8 @@ function getPeriodReservations(callback) {
             url: "/api/getperiodreservations?startDate=" + parsedStartDate
                 + "&endDate=" + parsedEndDate,
             type: "GET",
-            beforeSend: function (xhr) {
-                xhr.overrideMimeType("text/plain; charset=x-user-defined");
-            },
-            contentType: "application/json; charset=utf-8",
             success: function (response) {
-                periodReservations = JSON.parse(response);
+                periodReservations = response;
                 callback.call();
             }
         }).fail(function () {
@@ -458,12 +454,8 @@ function getWorkplaceReservations(callback) {
                 + "&endDate=" + monthEndDate + "&workplaceId="
                 + selWorkplace,
             type: "GET",
-            beforeSend: function (xhr) {
-                xhr.overrideMimeType("text/plain; charset=utf-8");
-            },
-            contentType: "application/json; charset=utf-8",
             success: function (response) {
-                workplaceReservations = JSON.parse(response);
+                workplaceReservations = response;
                 callback.call();
             }
         }).fail(function () {

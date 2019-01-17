@@ -5,7 +5,7 @@ var selWorkplace = null;
 $(document).ready(function () {
     initialize();
 
-})
+});
 
 $(window).resize(function () {
     console.log($(this).height() + " " + $(this).width())
@@ -28,9 +28,6 @@ function workplaceInitializer(workplaces) {
 function deleteWorkplace() {
     $.ajax({
         url: "/api/deleteworkplace",
-        beforeSend: function (xhr) {
-            xhr.overrideMimeType("text/plain; charset=x-user-defined");
-        },
         type: "DELETE",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({

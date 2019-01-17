@@ -4,7 +4,7 @@ var selWorkplace = null;
 // on document ready call initialize
 $(document).ready(function () {
     initialize();
-})
+});
 
 
 // calls getWorkplaces and initOnWorkplaces on callback
@@ -30,6 +30,7 @@ function getCoordinates() {
                 $("#yCoordinate").val(posY);
             });
 }
+
 function submitFunction() {
     $("#add-form").submit(function () {
         return false;
@@ -56,9 +57,6 @@ function addNewWorkplace() {
     $.ajax({
         url: "/api/addworkplace",
         type: "POST",
-        beforeSend: function (xhr) {
-            xhr.overrideMimeType("text/plain; charset=x-user-defined");
-        },
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(workplace),
         success: function (response) {
