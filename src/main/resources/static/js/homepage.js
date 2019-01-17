@@ -162,6 +162,12 @@ function defineDate() {
 	console.log("Date: "+realTimezoneStartDate);
 	var realTimezoneEndDate = new Date(endDate);
 
+	if(realTimezoneStartDate > realTimezoneEndDate){
+		$("#datepickerEnd").val($("#datepickerStart").val());
+        $("#actualDateEnd").val($("#actualDateStart").val());
+        endDate = $("#actualDateEnd").val();
+        realTimezoneEndDate = new Date(endDate);
+	}
 	var timezoneOffset = realTimezoneStartDate.getTimezoneOffset();
 	realTimezoneStartDate.setMinutes(realTimezoneStartDate.getMinutes() + timezoneOffset);
 	realTimezoneEndDate.setMinutes(realTimezoneEndDate.getMinutes() + timezoneOffset);
@@ -170,13 +176,7 @@ function defineDate() {
 	parsedStartDate = realTimezoneStartDate.getTime();
 	parsedEndDate =realTimezoneEndDate.getTime();
 
-	if(realTimezoneStartDate > realTimezoneEndDate){
-		$("#datepickerEnd").val($("#datepickerStart").val());
-		realTimezoneEndDate = realTimezoneStartDate;
-		endDate = startDate;
-		parsedEndDate = parsedStartDate;
-	}
-	
+
 	//check if summer or wintertime
 	var timeOffset = ((parsedEndDate - parsedStartDate + 1) / MILLISPERDAY);
 	if(timeOffset % 1 > 0){
