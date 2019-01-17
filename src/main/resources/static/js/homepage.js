@@ -459,7 +459,7 @@ function getWorkplaceReservations(callback) {
                 + selWorkplace,
             type: "GET",
             beforeSend: function (xhr) {
-                xhr.overrideMimeType("text/plain; charset=x-user-defined");
+                xhr.overrideMimeType("text/plain; charset=utf-8");
             },
             contentType: "application/json; charset=utf-8",
             success: function (response) {
