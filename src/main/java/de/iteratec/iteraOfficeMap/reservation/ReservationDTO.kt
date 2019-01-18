@@ -8,15 +8,4 @@ class ReservationDTO(
         val endDate: Long,
         val user: String,
         val workplace: Workplace
-) {
-
-
-    constructor(reservation: Reservation) : this(
-            reservation.workplace.id!!,
-            reservation.startDate,
-            reservation.endDate,
-            reservation.username,
-            reservation.workplace
-    )
-
-}
+)

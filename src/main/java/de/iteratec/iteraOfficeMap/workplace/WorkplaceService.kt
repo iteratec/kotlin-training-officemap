@@ -4,10 +4,9 @@ import de.iteratec.iteraOfficeMap.exceptions.AlreadyExistsException
 import de.iteratec.iteraOfficeMap.exceptions.DoesNotExistException
 import de.iteratec.iteraOfficeMap.reservation.ReservationRepository
 import de.iteratec.iteraOfficeMap.reservation.ReservationStatus
-import de.iteratec.iteraOfficeMap.utility.startOfDay
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.util.*
+import java.time.LocalDate
 
 @Service
 class WorkplaceService @Autowired constructor(
@@ -17,14 +16,19 @@ class WorkplaceService @Autowired constructor(
 
     fun getAllWorkplaces(): List<Workplace> = workplaceRepository.findAll()
 
+    fun findById(workplaceId: Long): Workplace {
+        return workplaceRepository
+                .findById(workplaceId)
+                .orElseThrow { DoesNotExistException() }
+    }
+
     /**
      * checks the status of the reservation
      */
-    fun getStatus(workplaceID: Long): ReservationStatus {
-        val workplace = workplaceRepository.findById(workplaceID).orElseThrow { DoesNotExistException() }
+    fun getStatus(workplaceId: Long): ReservationStatus {
+        val workplace = findById(workplaceId)
 
-        val date = startOfDay(Date())
-        val reservation = reservationRepository.findByStartDateEqualsAndWorkplace(date, workplace)
+        val reservation = reservationRepository.findByStartDateEqualsAndWorkplace(LocalDate.now(), workplace)
 
         return if (reservation == null) {
             ReservationStatus.FREE

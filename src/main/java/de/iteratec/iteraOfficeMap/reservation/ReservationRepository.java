@@ -4,25 +4,24 @@ import de.iteratec.iteraOfficeMap.workplace.Workplace;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    List<Reservation> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(
-            Long endDate, Long startDate);
+
+    List<Reservation> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDate endDate, LocalDate startDate);
 
     List<Reservation> findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndWorkplace(
-            Long endDate, Long startDate, Workplace workplace);
+            LocalDate endDate, LocalDate startDate, Workplace workplace);
 
-    Reservation findByStartDateEqualsAndWorkplace(Long startDate, Workplace workplace);
+    Reservation findByStartDateEqualsAndWorkplace(LocalDate startDate, Workplace workplace);
 
     List<Reservation> findByUsernameEqualsOrderByStartDateAsc(String username);
 
-
-    Reservation findByWorkplaceAndStartDateEqualsAndEndDateEquals(Workplace workplace, Long startDate, Long endDate);
+    Reservation findByWorkplaceAndStartDateEqualsAndEndDateEquals(Workplace workplace, LocalDate startDate, LocalDate endDate);
 
     @Transactional
     List<Reservation> deleteByWorkplaceAndStartDateAndEndDate(
-            Workplace workplace, Long StartDate, Long EndDate);
-
+            Workplace workplace, LocalDate startDate, LocalDate endDate);
 
 }
