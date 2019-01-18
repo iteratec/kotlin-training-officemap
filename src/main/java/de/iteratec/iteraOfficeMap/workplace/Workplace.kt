@@ -1,13 +1,17 @@
 package de.iteratec.iteraOfficeMap.workplace
 
-import de.iteratec.iteraOfficeMap.persistence.AbstractJpaPersistable
 import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.Id
 
 @Entity
-class Workplace(
+data class Workplace(
+        @Id
+        @GeneratedValue
+        val id: Long?,
         val name: String,
         val x: Int,
         val y: Int,
         val mapId: String,
         val equipment: String
-) : AbstractJpaPersistable<Long>()
+)

@@ -30,7 +30,7 @@ class WorkplacesController @Autowired constructor(private val workplaceService: 
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = [ApiResponse(code = 406, message = "Entry already exists")])
     fun addWorkplace(@RequestBody workplaceDTO: AddWorkplaceDTO) {
-        workplaceService.addNewWorkplace(Workplace(workplaceDTO.name, workplaceDTO.x, workplaceDTO.y, workplaceDTO.mapId, workplaceDTO.equipment))
+        workplaceService.addNewWorkplace(Workplace(null, workplaceDTO.name, workplaceDTO.x, workplaceDTO.y, workplaceDTO.mapId, workplaceDTO.equipment))
     }
 
     @DeleteMapping("/deleteworkplace", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -44,8 +44,7 @@ class WorkplacesController @Autowired constructor(private val workplaceService: 
     @ApiOperation(value = "updateWorkplace", notes = "Updates one workplace in the database.")
     @ApiResponses(value = [ApiResponse(code = 406, message = "Entry does not exists")])
     fun updateWorkplace(@RequestBody workplaceDTO: UpdateWorkplaceDTO) {
-        val updateWorkplace = Workplace(workplaceDTO.name, workplaceDTO.x, workplaceDTO.y, workplaceDTO.mapId, workplaceDTO.equipment)
-        updateWorkplace.id = workplaceDTO.id
+        val updateWorkplace = Workplace(workplaceDTO.id, workplaceDTO.name, workplaceDTO.x, workplaceDTO.y, workplaceDTO.mapId, workplaceDTO.equipment)
         workplaceService.updateWorkplace(updateWorkplace)
     }
 

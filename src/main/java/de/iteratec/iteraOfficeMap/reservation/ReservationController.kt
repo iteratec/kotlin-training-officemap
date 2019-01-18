@@ -31,12 +31,7 @@ class ReservationController
     @ApiOperation(value = "addReservation", notes = "Adds one new reservation to the database.")
     @ApiResponses(value = [ApiResponse(code = 406, message = "Entry already exists")])
     fun addReservation(@RequestBody reservation: AddReservationDTO, principal: Principal) {
-        reservationService.addReservation(Reservation(
-                reservation.startDate.millisToGermanLocalDate(),
-                reservation.endDate.millisToGermanLocalDate(),
-                principal.name,
-                workplaceService.findById(reservation.workplaceId)
-        ))
+        addReservations(listOf(reservation), principal)
     }
 
     @PostMapping("/addreservations", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -54,6 +49,7 @@ class ReservationController
         reservationService.addReservations(
                 reservationDTOs.map { reservationDTO ->
                     Reservation(
+                            null,
                             reservationDTO.startDate.millisToGermanLocalDate(),
                             reservationDTO.endDate.millisToGermanLocalDate(),
                             principal.name,
