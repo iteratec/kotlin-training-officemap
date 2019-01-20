@@ -19,12 +19,6 @@ class WorkplacesController @Autowired constructor(private val workplaceService: 
                 .map { WorkplaceDTO(it) }
     }
 
-    @GetMapping("/getstatus")
-    @ApiOperation(value = "getStatus", notes = "Returns a list of all workplaces.")
-    fun getStatus(workplaceID: Long?): String {
-        return workplaceService.getStatus(workplaceID!!).toString()
-    }
-
     @PostMapping("/addworkplace", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ApiOperation(value = "addNewWorkplace", notes = "Adds one new workplace to the database.")
     @ResponseStatus(HttpStatus.OK)

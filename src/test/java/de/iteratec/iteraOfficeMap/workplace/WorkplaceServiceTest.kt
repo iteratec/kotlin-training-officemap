@@ -2,9 +2,10 @@ package de.iteratec.iteraOfficeMap.workplace
 
 import de.iteratec.iteraOfficeMap.exceptions.AlreadyExistsException
 import de.iteratec.iteraOfficeMap.exceptions.DoesNotExistException
-import de.iteratec.iteraOfficeMap.reservation.ReservationStatus
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.containsInAnyOrder
+import org.hamcrest.Matchers.empty
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -22,87 +23,83 @@ class WorkplaceServiceTest
         private val workplaceService: WorkplaceService
 ) {
 
-    private val workplace1 = Workplace("First", 1, 1, "mapId", "Zwei Bildschirme")
-    private val workplace2 = Workplace("Second", 2, 2, "mapId", "Zwei Bildschirme")
-    private val workplace3 = Workplace("Third", 3, 3, "mapId", "Zwei Bildschirme")
-    private val workplace4 = Workplace("Fourth", 4, 4, "mapId", "Zwei Bildschirme")
+    private val workplace1 = Workplace(null, "First", 1, 1, "mapId", "Zwei Bildschirme")
+    private val workplace2 = Workplace(null, "Second", 2, 2, "mapId", "Zwei Bildschirme")
+    private val workplace3 = Workplace(null, "Third", 3, 3, "mapId", "Zwei Bildschirme")
+    private val workplace4 = Workplace(null, "Fourth", 4, 4, "mapId", "Zwei Bildschirme")
 
     @BeforeEach
-    fun init() {
+    fun deleteAllWorkplaces() {
         workplaceRepository.deleteAll(workplaceRepository.findAll())
     }
 
     @Test
-    fun getAllWorkplacesTest() {
-        createAndSaveWorkplaces()
-        val workplaceList = workplaceService.getAllWorkplaces()
-
-        assertEquals(3, workplaceList.size)
-        assertWorkplaceEqualsWorkplace(workplace1, workplaceList[0])
-        assertWorkplaceEqualsWorkplace(workplace2, workplaceList[1])
-        assertWorkplaceEqualsWorkplace(workplace3, workplaceList[2])
+    fun `when no workplaces exist none can be found`() {
+        assertThat(workplaceService.getAllWorkplaces(), empty())
     }
 
     @Test
-    fun getAllWorkplacesEmptyListTest() {
-        assertEquals(0, workplaceService.getAllWorkplaces().size)
+    fun `when one workplace exists it can be found`() {
+        workplaceRepository.save(workplace1)
+        assertThat(workplaceService.getAllWorkplaces(), containsInAnyOrder(workplace1))
     }
 
     @Test
-    fun addWorkPlaceTest() {
-        workplace4 = Workplace("Fourth", 4, 4, "mapId", "Zwei Bildschirme")
-        workplaceService.addNewWorkplace(workplace4)
-        val workplaceList = workplaceService.getAllWorkplaces()
-
-        assertEquals(1, workplaceList.size)
-        assertWorkplaceEqualsWorkplace(workplace4, workplaceList[0])
+    fun `when 4 workplaces exist all can be found`() {
+        workplaceRepository.saveAll(listOf(workplace1, workplace2, workplace3, workplace4))
+        assertThat(workplaceService.getAllWorkplaces(), containsInAnyOrder(workplace1, workplace2, workplace3, workplace4))
     }
 
     @Test
-    fun getStatusOfFreeWorkplaceTest() {
-        workplace4 = Workplace("fourth", 4, 4, "mapId", "Zwei Bildschirme")
-        workplaceRepository.save(workplace4)
-
-        assertEquals(ReservationStatus.FREE, workplaceService.getStatus(workplace4.id!!))
+    fun `add 1 workplace`() {
+        assertThat(workplaceService.getAllWorkplaces(), empty())
+        workplaceService.addNewWorkplace(workplace1)
+        assertThat(workplaceService.getAllWorkplaces(), containsInAnyOrder(workplace1))
     }
 
     @Test
-    fun addAlreadyExistingWorkPlaceWithSameCoordinates() {
-        Assertions.assertThrows(AlreadyExistsException::class.java) {
-            workplace4 = Workplace("fourth", 4, 4, "mapId", "Zwei Bildschirme")
-            workplace3 = Workplace("third", 4, 4, "mapId", "Zwei Bildschirme")
-            workplaceService.addNewWorkplace(workplace3)
-            workplaceService.addNewWorkplace(workplace4)
+    fun `add second workplace at same coordinates throws AlreadyExistsException`() {
+        workplaceService.addNewWorkplace(workplace1)
+        assertThrows(AlreadyExistsException::class.java) {
+            workplaceService.addNewWorkplace(workplace1.copy(name = "otherName"))
         }
     }
 
     @Test
-    fun addAlreadyExistingWorkPlaceWithSameName() {
-        Assertions.assertThrows(AlreadyExistsException::class.java) {
-            workplace4 = Workplace("fourth", 4, 4, "mapId", "Zwei Bildschirme")
-            workplace3 = Workplace("fourth", 3, 3, "mapId", "Zwei Bildschirme")
-            workplaceService.addNewWorkplace(workplace4)
-            workplaceService.addNewWorkplace(workplace3)
+    fun `add second workplace with same name but different coordinates throws AlreadyExistsException`() {
+        workplaceService.addNewWorkplace(workplace1)
+        assertThrows(AlreadyExistsException::class.java) {
+            workplaceService.addNewWorkplace(workplace1.copy(x = 123, y = 123))
         }
     }
 
     @Test
-    fun deleteWorkPlaceTest() {
-        createAndSaveWorkplaces()
-        workplaceService.deleteWorkplace(workplace1.id!!)
-        val workplaceList = workplaceRepository.findAll()
-        assertEquals(2, workplaceList.size)
-        assertEquals(workplace2, workplaceList[0])
-        assertEquals(workplace3, workplaceList[1])
+    fun `delete last workplace`() {
+        val workplace = workplaceRepository.save(workplace1)
+        val id = requireNotNull(workplace.id)
+
+        assertThat(workplaceService.getAllWorkplaces(), containsInAnyOrder(workplace))
+        workplaceService.deleteWorkplace(id)
+        assertThat(workplaceService.getAllWorkplaces(), empty())
     }
 
     @Test
-    fun DeleteNonExistingWorkplaceTest() {
-        Assertions.assertThrows(DoesNotExistException::class.java) {
-            createAndSaveWorkplaces()
-            workplaceRepository.deleteById(workplace1.id!!)
-            workplaceService.deleteWorkplace(workplace1.id!!)
+    fun `delete one of two workplaces`() {
+        val workplaces = workplaceRepository.saveAll(listOf(workplace1, workplace2))
+        val (first, second) = workplaces
 
+        val firstId = requireNotNull(first.id)
+
+        assertThat(workplaceService.getAllWorkplaces(), containsInAnyOrder(first, second))
+        workplaceService.deleteWorkplace(firstId)
+        assertThat(workplaceService.getAllWorkplaces(), containsInAnyOrder(second))
+    }
+
+    @Test
+    fun `delete a non-existing workplace throws a DoesNotExistException`() {
+        assertThrows(DoesNotExistException::class.java) {
+            workplaceService.deleteWorkplace(1234)
         }
     }
+
 }

@@ -50,6 +50,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
+    testCompile("org.hamcrest:hamcrest-core:2.1")
     testCompile("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "junit")
     }
