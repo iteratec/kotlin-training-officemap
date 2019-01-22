@@ -1,16 +1,16 @@
 package de.iteratec.officemap.reservation
 
-import de.iteratec.officemap.utility.endOfDayMillis
-import de.iteratec.officemap.utility.millisToGermanLocalDate
-import de.iteratec.officemap.utility.startOfDayMillis
 import de.iteratec.officemap.workplace.WorkplaceService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.format.annotation.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat.ISO.DATE
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
+import java.time.LocalDate
 
 @RestController
 @RequestMapping("/api")
@@ -50,8 +50,8 @@ class ReservationController
                 reservationDTOs.map { reservationDTO ->
                     Reservation(
                             null,
-                            reservationDTO.startDate.millisToGermanLocalDate(),
-                            reservationDTO.endDate.millisToGermanLocalDate(),
+                            reservationDTO.startDate,
+                            reservationDTO.endDate,
                             principal.name,
                             workplace
                     )
@@ -61,22 +61,28 @@ class ReservationController
 
     @GetMapping("/getperiodreservations")
     @ApiOperation(value = "getPeriodReservations", notes = "Returns a list of reservations for a time period.")
-    fun getPeriodReservations(@RequestParam startDate: Long, endDate: Long): List<ReservationDTO> {
+    fun getPeriodReservations(
+            @RequestParam @DateTimeFormat(iso = DATE) startDate: LocalDate,
+            @RequestParam @DateTimeFormat(iso = DATE) endDate: LocalDate
+    ): List<ReservationDTO> {
         return reservationService
-                .getPeriodReservations(startDate.millisToGermanLocalDate(), endDate.millisToGermanLocalDate())
+                .getPeriodReservations(startDate, endDate)
                 .map { it.toReservationDTO() }
     }
 
     @GetMapping("/getworkplacereservations")
     @ApiOperation(value = "getWorkplaceReservations", notes = "Returns a list of a workplaces reservations for a time period.")
-    fun getWorkplaceReservations(@RequestParam startDate: Long, endDate: Long, workplaceId: Long): List<ReservationDTO> {
+    fun getWorkplaceReservations(
+            @RequestParam @DateTimeFormat(iso = DATE) startDate: LocalDate,
+            @RequestParam @DateTimeFormat(iso = DATE) endDate: LocalDate,
+            workplaceId: Long
+    ): List<ReservationDTO> {
         return reservationService
                 .getWorkplaceReservations(
-                        startDate.millisToGermanLocalDate(),
-                        endDate.millisToGermanLocalDate(),
+                        startDate,
+                        endDate,
                         workplaceId
-                )
-                .map { it.toReservationDTO() }
+                ).map { it.toReservationDTO() }
     }
 
     @GetMapping("/getuserreservations")
@@ -93,8 +99,8 @@ class ReservationController
         reservationService.deleteReservations(deleteReservationDTOs.map {
             DeleteReservationRequest(
                     it.workplaceId,
-                    it.startDate.millisToGermanLocalDate(),
-                    it.endDate.millisToGermanLocalDate()
+                    it.startDate,
+                    it.endDate
             )
         })
     }
@@ -103,8 +109,8 @@ class ReservationController
 
 fun Reservation.toReservationDTO() = ReservationDTO(
         id!!,
-        startDate.startOfDayMillis(),
-        endDate.endOfDayMillis(),
+        startDate,
+        endDate,
         username,
         workplace
 )

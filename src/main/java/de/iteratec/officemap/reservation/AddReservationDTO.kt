@@ -1,5 +1,7 @@
 package de.iteratec.officemap.reservation
 
+import java.time.LocalDate
+
 data class AddReservationDTO(val workplaceId: Long,
-                             val startDate: Long,
-                             val endDate: Long)
+                             val startDate: LocalDate,
+                             val endDate: LocalDate)
