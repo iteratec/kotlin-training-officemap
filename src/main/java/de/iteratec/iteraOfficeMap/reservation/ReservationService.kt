@@ -1,11 +1,14 @@
 package de.iteratec.iteraOfficeMap.reservation
 
-import de.iteratec.iteraOfficeMap.exceptions.*
-import de.iteratec.iteraOfficeMap.utility.millisToGermanLocalDate
+import de.iteratec.iteraOfficeMap.exceptions.AlreadyExistsException
+import de.iteratec.iteraOfficeMap.exceptions.DoesNotExistException
+import de.iteratec.iteraOfficeMap.exceptions.InvalidDatesException
+import de.iteratec.iteraOfficeMap.exceptions.InvalidReservationException
 import de.iteratec.iteraOfficeMap.workplace.Workplace
 import de.iteratec.iteraOfficeMap.workplace.WorkplaceRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 @Service
@@ -18,53 +21,38 @@ class ReservationService @Autowired constructor(
         return reservationRepository.findAll()
     }
 
-    fun addReservation(reservation: Reservation) {
-        reservationRepository.save(reservation)
-    }
-
+    @Transactional
     fun addReservations(reservations: List<Reservation>) {
-        reservationRepository.saveAll(reservations)
-    }
+        if (reservations.isEmpty()) {
+            return
+        }
 
-    private fun checkValidityAndGetWorkplace(addReservationDTO: AddReservationDTO): Workplace {
-        val workplace = workplaceRepository
-                .findById(addReservationDTO.workplaceId)
-                .orElseThrow { InvalidWorkplaceException() }
-
-        if (addReservationDTO.startDate > addReservationDTO.endDate) {
+        if (reservations.any { it.startDate > it.endDate }) {
             throw InvalidReservationException()
         }
 
+        val workplace = reservations.first().workplace
+        requireNotNull(workplace.id)
+        if (reservations.any { it.workplace != workplace }) {
+            throw InvalidReservationException()
+        }
 
-        if (getConflictingReservations(
-                        addReservationDTO.startDate.millisToGermanLocalDate(),
-                        addReservationDTO.endDate.millisToGermanLocalDate(),
-                        addReservationDTO.workplaceId
-                ).isNotEmpty()) {
+        if (reservations.any { getConflictingReservations(it.startDate, it.endDate, it.workplace).isNotEmpty() }) {
             throw AlreadyExistsException()
         }
-        return workplace
-    }
+        // TODO: Ok, so we checked that the incoming reservations do not conflict with any in the database.
+        //       But what if they have conflicts with each other? Then we will still save them...
 
+        reservationRepository.saveAll(reservations)
+    }
 
     /**
      * @return a list of reservations, if there are any in given period
      */
-    fun getConflictingReservations(startDate: LocalDate, endDate: LocalDate, workplaceId: Long): List<Reservation> {
-        val workplace = workplaceRepository.findById(workplaceId).orElseThrow { DoesNotExistException() }
-
+    fun getConflictingReservations(startDate: LocalDate, endDate: LocalDate, workplace: Workplace): List<Reservation> {
         return reservationRepository
                 .findByStartDateLessThanEqualAndEndDateGreaterThanEqualAndWorkplace(endDate, startDate, workplace)
 
-    }
-
-    /**
-     * @return a list of all reservations for one day
-     */
-    fun getDailyReservations(date: LocalDate): List<ReservationDTO> {
-        return reservationRepository
-                .findByStartDateLessThanEqualAndEndDateGreaterThanEqual(date, date)
-                .map { it.toReservationDTO() }
     }
 
     /**

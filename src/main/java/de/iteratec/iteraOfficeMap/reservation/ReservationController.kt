@@ -59,12 +59,6 @@ class ReservationController
         )
     }
 
-    @GetMapping("/getdailyreservations")
-    @ApiOperation(value = "getDailyReservations", notes = "Returns a list of reservations for exactly one day.")
-    fun getDailyReservations(@RequestParam date: Long): List<ReservationDTO> {
-        return reservationService.getDailyReservations(date.millisToGermanLocalDate())
-    }
-
     @GetMapping("/getperiodreservations")
     @ApiOperation(value = "getPeriodReservations", notes = "Returns a list of reservations for a time period.")
     fun getPeriodReservations(@RequestParam startDate: Long, endDate: Long): List<ReservationDTO> {
