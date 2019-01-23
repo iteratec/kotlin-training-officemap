@@ -336,7 +336,7 @@ function initCalendar() {
                 }
                 // if date is in selected time period
 
-                if (localDate.isAfter(startDate) && !localDate.isAfter(endDate)) {
+                if (!localDate.isBefore(startDate) && !localDate.isAfter(endDate)) {
                     if (weekdaysShown) {
                         // for all selected weekdays: check if they match the given date
                         for (var i = 0; i < weekdayDateList.length; i++) {
