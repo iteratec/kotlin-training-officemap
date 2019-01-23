@@ -334,9 +334,9 @@ function initCalendar() {
                             + workplaceReservationDays[localDate].user];
                     }
                 }
-                // if date is in selected Timespan
+                // if date is in selected time period
 
-                if (localDate.isAfter(startDate) && localDate.isBefore(endDate)) {
+                if (localDate.isAfter(startDate) && !localDate.isAfter(endDate)) {
                     if (weekdaysShown) {
                         // for all selected weekdays: check if they match the given date
                         for (var i = 0; i < weekdayDateList.length; i++) {
