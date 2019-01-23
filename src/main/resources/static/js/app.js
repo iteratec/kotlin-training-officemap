@@ -29,29 +29,23 @@ function initOnCalcDates() {
 // checks if the selected dates are valid for one day or a time period
 // else returns a error message
 function initialize() {
-    if (startDate < endDate) {
-        getPeriodReservations();
-    } else if (startDate > endDate) {
-        $("#errorMessage").html("Das Enddatum muss größer oder gleich dem Startdatum sein!");
-    } else if (weekdaysShown) {
-        showWeekdays();
-    }
-    if (selectedWorkplaceId) {
+    getPeriodReservations();
+
+    if (selectedWorkplaceId != null) {
         initOnCalcDates();
     }
 }
 
 function onPeriodReservationsLoaded(reservations) {
-    $("#errorMessage").html("");
-    getWorkplaces(initOnWorkplaces);
-}
+    periodReservations = reservations.map(function (reservation) {
+        // parse dates as LocalDate objects
+        reservation.startDate = JSJoda.LocalDate.parse(reservation.startDate);
+        reservation.endDate = JSJoda.LocalDate.parse(reservation.endDate);
+        return reservation;
+    });
 
-// checks if the selected dates are for one day or a time period
-// and calls their function to build the map
-function initOnWorkplaces() {
-    if (startDate < endDate) {
-        buildPeriodMap();
-    }
+    $("#errorMessage").html("");
+    getWorkplaces(buildPeriodMap);
 }
 
 // on document ready load datepicker and set dates to today
@@ -133,39 +127,44 @@ function defineDate() {
 // adds an reservation object for every day in a time period to a list
 // and returns the list
 function generateAllReservationDays() {
-    var reservations = [];
+    var reservationDays = [];
     for (var i = 0; i < periodReservations.length; i++) {
+        var periodReservation = periodReservations[i];
+
         // checks if reservation is for a time period or for one day and adds
         // the reservations to the list
-        if (periodReservations[i].startDate < periodReservations[i].endDate) {
-            for (var currentDate = periodReservations[i].startDate;
-                 currentDate <= periodReservations[i].endDate;
-                 currentDate = currentDate.plusDays(1)) {
+        if (periodReservation.startDate.isBefore(periodReservation.endDate)) {
+            for (var date = periodReservation.startDate;
+                 date.isBefore(periodReservation.endDate) || date.isEqual(periodReservation.endDate);
+                 date = date.plusDays(1)) {
 
                 var reservation = {
-                    "date": currentDate,
-                    "workplaceId": periodReservations[i].workplace.id
+                    "date": date,
+                    "workplaceId": periodReservation.workplace.id
                 };
-                if (reservation.date >= startDate && reservation.date <= endDate) {
-                    reservations.push(reservation);
+                if (
+                    (reservation.date.isEqual(startDate) || reservation.date.isAfter(startDate)) &&
+                    (reservation.date.isEqual(endDate) || reservation.date.isBefore(endDate))
+                ) {
+                    reservationDays.push(reservation);
                 }
             }
         } else {
-            reservations.push({
-                "date": periodReservations[i].date,
-                "workplaceId": periodReservations[i].workplace.id
+            reservationDays.push({
+                "date": periodReservation.startDate,
+                "workplaceId": periodReservation.workplace.id
             });
         }
     }
 
     $('#monthYearPicker').datepicker("refresh");
 
-    return reservations;
+    return reservationDays;
 }
 
 // creates the office map for a time period
 function buildPeriodMap() {
-    var allReservationDays = generateAllReservationDays();
+    allReservationDays = generateAllReservationDays();
 
     // creates and adds the office background to the div container
     var backgroundImage = $('<img>');
@@ -178,22 +177,18 @@ function buildPeriodMap() {
 
     // places workplaces on the background
     for (var i = 0; i < workplaces.length; i++) {
-
+        var workplace = workplaces[i];
         var image = "/images/available.png";
         var status = "available";
         var workplaceImg = $('<img>');
         workplaceImg.attr("class", "workplace");
 
-        var counter = calcCounter(i);
+        var reservedDays = getReservedDays(workplace);
 
-        // if the counter is GTE one, the workplace has a reservation
-        // if the counter is equal to the number of days in the time period the
-        // workplace is reserved the whole time
-        // else its reservation is partial
         if (noWeekdayChecked) {
-            if (counter >= 1) {
+            if (reservedDays >= 1) {
                 status = "reserved";
-                if (((parsedEndDate - parsedStartDate + 1) / MILLISPERDAY) == counter) {
+                if (startDate.daysUntil(endDate) + 1 >= reservedDays) {
                     image = "/images/reserved.png";
                 } else {
                     image = "/images/partial.png";
@@ -201,9 +196,9 @@ function buildPeriodMap() {
 
             }
         } else {
-            if (counter >= 1) {
+            if (reservedDays >= 1) {
                 status = "reserved";
-                if (weekdayDateList.length == counter) {
+                if (weekdayDateList.length === reservedDays) {
                     image = "/images/reserved.png";
                 } else {
                     image = "/images/partial.png";
@@ -211,8 +206,8 @@ function buildPeriodMap() {
             }
         }
 
-        if (selectedWorkplaceId == workplaces[i].id) {
-            if (status == "available") {
+        if (selectedWorkplaceId === workplace.id) {
+            if (status === "available") {
                 workplaceImg.attr("class", "workplace pulsation");
                 selectedStatus = "available";
             } else {
@@ -220,53 +215,50 @@ function buildPeriodMap() {
             }
         }
         workplaceImg.attr("src", image);
-        workplaceImg.attr("title", workplaces[i].name);
+        workplaceImg.attr("title", workplace.name);
         workplaceImg.data("status", status);
-        workplaceImg.css("left", workplaces[i].x + "px");
-        workplaceImg.css("top", workplaces[i].y + "px");
-        workplaceImg.attr("id", workplaces[i].id);
-        workplaceImg.data("workplaceId", workplaces[i].id);
-        workplaceImg.data("workplaceName", workplaces[i].name);
-        workplaceImg.data("workplaceEquipment", workplaces[i].equipment);
-        workplaceImg.data("x", workplaces[i].x);
-        workplaceImg.data("y", workplaces[i].y);
-        workplaceImg.data("workplaceId", workplaces[i].id);
+        workplaceImg.css("left", workplace.x + "px");
+        workplaceImg.css("top", workplace.y + "px");
+        workplaceImg.attr("id", workplace.id);
+        workplaceImg.data("workplaceId", workplace.id);
+        workplaceImg.data("workplaceName", workplace.name);
+        workplaceImg.data("workplaceEquipment", workplace.equipment);
+        workplaceImg.data("x", workplace.x);
+        workplaceImg.data("y", workplace.y);
+        workplaceImg.data("workplaceId", workplace.id);
 
         workplaceImg.attr("data-toggle", "tooltip");
 
         pulseOnClick(workplaceImg);
 
         $('#image').append(workplaceImg);
-
     }
 }
 
-// calculates counter for adding one of the three images to a workplace
-function calcCounter(i) {
-    var counter = 0;
+// calculates number of reserved days for a workplace
+function getReservedDays(workplace) {
+    var reservationDaysOfWorkplace = allReservationDays.filter(function (reservationDay) {
+        return reservationDay.workplaceId === workplace.id;
+    });
 
     if (noWeekdayChecked) {
-        // no weekdays selected
-        for (var j = 0; j < allReservationDays.length; j++) {
-            if (workplaces[i].id == allReservationDays[j].workplaceId) {
-                counter++;
-            }
-        }
+        // no weekdays selected, so count every reservation with a matching workplaceId
+        return reservationDaysOfWorkplace.length;
 
     } else {
         // weekdays selected
-        for (var j = 0; j < weekdayDateList.length; j++) {
-            for (var k = 0; k < allReservationDays.length; k++) {
-                if (workplaces[i].id == allReservationDays[k].id
-                    && weekdayDateList[j].parsedStartDate == allReservationDays[k].date) {
-                    counter++;
+        var reservedDays = 0;
+        for (var i = 0; i < reservationDaysOfWorkplace.length; i++) {
+            var currentReservationDay = reservationDaysOfWorkplace[i];
+            for (var j = 0; j < weekdayDateList.length; j++) {
+                var weekdayDate = weekdayDateList[j];
+                if (weekdayDate.startDate === currentReservationDay.date) {
+                    reservedDays++;
                 }
             }
         }
-
+        return reservedDays;
     }
-
-    return counter;
 }
 
 
@@ -402,7 +394,7 @@ function searchWeekdays(checkedWeekdays) {
     for (var i = 0; i < checkedWeekdays.length; i++) {
         var currentDate = startDate;
 
-        while (currentDate <= endDate) {
+        while (currentDate.isBefore(endDate) || currentDate.isEqual(endDate)) {
             if (currentDate.dayOfWeek() === checkedWeekdays[i]) {
                 weekdayDateList.append({date: currentDate});
             }
@@ -423,7 +415,7 @@ function showWeekdays() {
         $(".weekday").show();
     } else { // only show weekdays in the selected timspan
         $(".weekday").hide();
-        for (var date = startDate; date <= endDate; date = date.plusDays(1)) {
+        for (var date = startDate; date.isBefore(endDate) || date.isEqual(endDate); date = date.plusDays(1)) {
             $("#" + weekdays[date.dayOfWeek() - 1]).show();
         }
     }
@@ -443,21 +435,22 @@ function buildMap(imageSrc, imageID, wpID, pulse, workplaces) {
     divContainer.append(backgroundImage);
 
     for (var i = 0; i < workplaces.length; i++) {
+        var workplace = workplaces[i];
         var image = imageSrc;
         var workplaceImg = $('<img>');
-        var title = workplaces[i].name;
+        var title = workplace.name;
         workplaceImg.attr("title", title);
         workplaceImg.attr("src", image);
         workplaceImg.attr("class", "workplace");
-        workplaceImg.css("left", workplaces[i].x + "px");
-        workplaceImg.css("top", workplaces[i].y + "px");
-        workplaceImg.data("workplaceName", workplaces[i].name);
-        workplaceImg.data("workplaceEquipment", workplaces[i].equipment);
-        workplaceImg.data("x", workplaces[i].x);
-        workplaceImg.data("y", workplaces[i].y);
+        workplaceImg.css("left", workplace.x + "px");
+        workplaceImg.css("top", workplace.y + "px");
+        workplaceImg.data("workplaceName", workplace.name);
+        workplaceImg.data("workplaceEquipment", workplace.equipment);
+        workplaceImg.data("x", workplace.x);
+        workplaceImg.data("y", workplace.y);
 
         if (wpID) {
-            workplaceImg.data("workplaceId", workplaces[i].id);
+            workplaceImg.data("workplaceId", workplace.id);
         }
 
         if (pulse) {
