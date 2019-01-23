@@ -1,111 +1,114 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta name="viewport" content="width=device-width , initial-scale=1" charset="utf-8">
-<title>Arbeitsplatz erstellen</title>
-<link rel="stylesheet" href="/jqueryui/jquery-ui.css">
-<script src="jqueryui/external/jquery/jquery.js"></script>
-<script src="jqueryui/jquery-ui.js"></script>
-<link rel="stylesheet" href="/jqueryui/jquery-ui.theme.css" />
+    <meta name="viewport" content="width=device-width , initial-scale=1" charset="utf-8">
+    <title>Arbeitsplatz erstellen</title>
+    <link rel="stylesheet" href="/jqueryui/jquery-ui.css">
+    <script src="jqueryui/external/jquery/jquery.js"></script>
+    <script src="jqueryui/jquery-ui.js"></script>
+    <link rel="stylesheet" href="/jqueryui/jquery-ui.theme.css"/>
 
-<link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.css" />
-<link rel="stylesheet" href="/css/updateBootstrap.css" />
-<script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="/css/customstyle.css" />
+    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/css/updateBootstrap.css"/>
+    <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/css/customstyle.css"/>
 
-<script type="text/javascript" src="js/js-joda.min.js"></script>
-<script type="text/javascript" src="js/api.js"></script>
-<script type="text/javascript" src="js/admin_add_workplace.js"></script>
+    <script type="text/javascript" src="js/js-joda.min.js"></script>
+    <script type="text/javascript" src="js/api.js"></script>
+    <script type="text/javascript" src="js/admin_add_workplace.js"></script>
 
 </head>
 <body>
-	<div class="container-fluid">
-		<div id="topbar" class="row content">
-			<div class="col-sm-4 col-md-3 col-lg-2">
-				<a href="/index.html"><img src="/images/iteratec_logo.jpg"
-					id="logo"></a>
-			</div>
-			<div id="officemap" class="col-sm-8 col-md-9 col-lg-10">
-				<h3>
-					itera<font color="#aa228f">OfficeMap </font>
-				</h3>
-			</div>
-		</div>
-	</div>
-	<div class="container-fluid">
-		<div id="statusbar" class="row content">
-			<div id="username" class="col-sm-4 col-md-3 col-lg-2">
-				<h4></h4>
-			</div>
-			<div id="pagetitle" class="col-sm-8 col-md-9 col-lg-10">
-				<h4>Dem Büro einen neuen Arbeitsplatz hinzufügen</h4>
-			</div>
-		</div>
-	</div>
-	<div class="container-fluid">
-		<div class="row content">
-			<div id="sidebar" class="col-sm-4 col-md-3 col-lg-2">
-				<nav class="navbar navbar-default sidebar" role="navigation">
-					<div class="container-fluid">
-						<div class="navbar-header">
-							<button type="button" class="pull-left navbar-toggle"
-								data-toggle="collapse"
-								data-target="#bs-sidebar-navbar-collapse-1">
-								<span class="sr-only">Toggle navigation</span> <span
-									class="icon-bar"></span> <span class="icon-bar"></span> <span
-									class="icon-bar"></span>
-							</button>
-						</div>
-						<div class="collapse navbar-collapse"
-							id="bs-sidebar-navbar-collapse-1">
-							<ul class="nav navbar-nav">
-								<li id="sidebarheader" class="nav-header">Menü</li>
-								<li><a href="/index.html">Tagesansicht</a></li>
-								<li><a href="/user.html">Mitarbeiterseite</a></li>
-								<li id="sidebarheader" class="nav-header">Adminpanel</li>
-								<li class="active"><a href="/admin_add_workplace.html">Arbeitsplatz
-										hinzufügen</a></li>
-								<li><a href="/admin_delete_workplace.html">Arbeitsplatz
-										löschen</a></li>
-								<li><a href="/admin_delete_reservation.html">Reservierungen
-										löschen</a></li>
-								<li><a href="/admin_manage_workplace.html">Arbeitsplätze verwalten</a></li>
-								<li><a class="logout" href="/logout"><span class="glyphicon glyphicon-log-out"></span> Ausloggen</a></li>
-							</ul>
-						</div>
-					</div>
-				</nav>
-			</div>
-			<div id="maincontent" class="col-sm-8 col-md-9 col-lg-10">
-				<div class="row content">
-					<div class="col-md-3 col-lg-3">
-						<h4>Neuen Arbeitsplatz erstellen:</h4>
-						Um einen neuen Arbeitsplatz zu erstellen, einen Arbeitsplatznamen
-						und seine Position durch Klick auf dem Plan oder durch manuelle
-						Eingabe der Koordinaten festlegen. <br> <br>
-						<form id="add-form">
-							<label for="xCoordinate">X-Koordinate: </label><input type="text"
-								class="form-control" id="xCoordinate" value="0" required>
-							<label for="yCoordinate">Y-Koordinate: </label><input type="text"
-								class="form-control" id="yCoordinate" value="0" required>
-							<label for="workplaceName">Arbeitsplatzname: </label><input
-								type="text" class="form-control" id="workplaceName" required>
-							<label for="workplaceEquipment">Ausstattung: </label><input
-								type="text" class="form-control" id="workplaceEquipment" required>
-							<br> <input type="submit" class="btn btn-default"
-										id="submitWorkplace" value="Arbeitsplatz erstellen"
-										onclick="addNewWorkplace()" />
-						</form>
-						<br>
-						<div id="message" style="color: red"></div>
-					</div>
-					<div class="col-md-9 col-lg-9">
-						<h4>Büroplan:</h4>
-						<div class="office pre-scrollable" id="image"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<div class="container-fluid">
+    <div id="topbar" class="row content">
+        <div class="col-sm-4 col-md-3 col-lg-2">
+            <a href="/index.html"><img src="/images/iteratec_logo.jpg"
+                                       id="logo"></a>
+        </div>
+        <div id="officemap" class="col-sm-8 col-md-9 col-lg-10">
+            <h3>
+                itera<font color="#aa228f">OfficeMap </font>
+            </h3>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div id="statusbar" class="row content">
+        <div id="username" class="col-sm-4 col-md-3 col-lg-2">
+            <h4></h4>
+        </div>
+        <div id="pagetitle" class="col-sm-8 col-md-9 col-lg-10">
+            <h4>Dem Büro einen neuen Arbeitsplatz hinzufügen</h4>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row content">
+        <div id="sidebar" class="col-sm-4 col-md-3 col-lg-2">
+            <nav class="navbar navbar-default sidebar" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="pull-left navbar-toggle"
+                                data-toggle="collapse"
+                                data-target="#bs-sidebar-navbar-collapse-1">
+                            <span class="sr-only">Toggle navigation</span> <span
+                                class="icon-bar"></span> <span class="icon-bar"></span> <span
+                                class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse"
+                         id="bs-sidebar-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                            <li id="sidebarheader" class="nav-header">Menü</li>
+                            <li><a href="/index.html">Tagesansicht</a></li>
+                            <li><a href="/user.html">Mitarbeiterseite</a></li>
+                            <li id="sidebarheader" class="nav-header">Adminpanel</li>
+                            <li class="active"><a href="/admin_add_workplace.html">Arbeitsplatz
+                                hinzufügen</a></li>
+                            <li><a href="/admin_delete_workplace.html">Arbeitsplatz
+                                löschen</a></li>
+                            <li><a href="/admin_delete_reservation.html">Reservierungen
+                                löschen</a></li>
+                            <li><a href="/admin_manage_workplace.html">Arbeitsplätze verwalten</a></li>
+                            <li><a class="logout" href="/logout"><span class="glyphicon glyphicon-log-out"></span>
+                                Ausloggen</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <div id="maincontent" class="col-sm-8 col-md-9 col-lg-10">
+            <div class="row content">
+                <div class="col-md-3 col-lg-3">
+                    <h4>Neuen Arbeitsplatz erstellen:</h4>
+                    Um einen neuen Arbeitsplatz zu erstellen, einen Arbeitsplatznamen
+                    und seine Position durch Klick auf dem Plan oder durch manuelle
+                    Eingabe der Koordinaten festlegen. <br> <br>
+                    <form id="add-form">
+                        <label for="xCoordinate">X-Koordinate: </label><input type="text"
+                                                                              class="form-control" id="xCoordinate"
+                                                                              value="0" required>
+                        <label for="yCoordinate">Y-Koordinate: </label><input type="text"
+                                                                              class="form-control" id="yCoordinate"
+                                                                              value="0" required>
+                        <label for="workplaceName">Arbeitsplatzname: </label><input
+                            type="text" class="form-control" id="workplaceName" required>
+                        <label for="workplaceEquipment">Ausstattung: </label><input
+                            type="text" class="form-control" id="workplaceEquipment" required>
+                        <br> <input type="submit" class="btn btn-default"
+                                    id="submitWorkplace" value="Arbeitsplatz erstellen"
+                                    onclick="addNewWorkplace()"/>
+                    </form>
+                    <br>
+                    <div id="message" style="color: red"></div>
+                </div>
+                <div class="col-md-9 col-lg-9">
+                    <h4>Büroplan:</h4>
+                    <div class="office pre-scrollable" id="image"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
