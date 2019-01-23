@@ -51,7 +51,7 @@ function clickedDelete() {
 }
 
 
-//lets a workplace pulse on click and saves the ID to selWorkplace
+//lets a workplace pulse on click and saves the ID to selectedWorkplaceId
 function pulseOnClick(workplaceImg) {
     workplaceImg.click(function () {
         $('.pulsation').toggleClass('pulsation');

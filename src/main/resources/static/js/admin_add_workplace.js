@@ -1,5 +1,4 @@
 var workplaces = null;
-var selWorkplace = null;
 
 // on document ready call initialize
 $(document).ready(function () {
@@ -46,7 +45,7 @@ function addNewWorkplace() {
         name: ($("#workplaceName").val()),
         x: ($("#xCoordinate").val() - 9),
         y: ($("#yCoordinate").val() - 9),
-        mapId: "frankfurt_office" //TODO choose mapId
+        mapId: "frankfurt_office" // TODO choose mapId
     };
 
     if (workplace.name === "") {

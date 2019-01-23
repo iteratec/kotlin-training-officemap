@@ -1,88 +1,57 @@
-var MILLISPERDAY = 86400000;
-
 //true if Weekdays can be chosen
 var weekdaysShown = false;
 //contains all workplaces
 var workplaces = null;
 //contains selected WorkplaceId
-var selWorkplace = null;
+var selectedWorkplaceId = null;
 //contains a date with the selected month and year of the datepicker
-var selMonthYear = new Date();
-// contain all reservations in period or day
-var dailyReservations = null;
-var periodReservations = null;
-// start and end Date of the selected Month
-var startDate = null;
-var endDate = null;
+var selMonthYear = JSJoda.LocalDate.now();
+var periodReservations = [];
+
+var startDate = JSJoda.LocalDate.now();
+var endDate = startDate;
+
 var noWeekdayChecked = true;
 
 var scrChangedToSmall = false;
-var parsedStartDate = null;
-var parsedEndDate = null;
-var monthStartDate = null;
-var monthEndDate = null;
 var allReservationDays = [];
 var workplaceReservationDays = [];
-var selectedWorkplaceReservationDays = [];
 var workplaceReservations = null;
 var selectedStatus = null;
 var checkedWeekdays = [];
 var weekdayDateList = [];
 
-
-function inputChanged() {
-
-    getDays(initOnCalcDates);
-}
-
 function initOnCalcDates() {
     getWorkplaceReservations(generateWorkplaceReservationDays);
-}
-
-function getDays(callback) {
-    var startDate = new Date(selMonthYear.getFullYear(), selMonthYear
-        .getMonth(), 1);
-    monthStartDate = Date.parse(startDate);
-    var endDate = new Date(selMonthYear.getFullYear(),
-        selMonthYear.getMonth() + 1, 0, 23, 59, 59, 999);
-    monthEndDate = Date.parse(endDate);
-    callback.call();
 }
 
 
 // checks if the selected dates are valid for one day or a time period
 // else returns a error message
 function initialize() {
-
-    if (parsedStartDate < parsedEndDate) {
-        getPeriodReservations(initOnMapBuilded);
-    } else if (parsedStartDate > parsedEndDate) {
-        $("#errorMessage").html(
-            "Das Enddatum muss größer oder gleich dem Startdatum sein!");
+    if (startDate < endDate) {
+        getPeriodReservations();
+    } else if (startDate > endDate) {
+        $("#errorMessage").html("Das Enddatum muss größer oder gleich dem Startdatum sein!");
     } else if (weekdaysShown) {
-        showWeekdays(parsedStartDate, parsedEndDate);
+        showWeekdays();
     }
-    if (selWorkplace)
-        inputChanged();
-
-
+    if (selectedWorkplaceId) {
+        initOnCalcDates();
+    }
 }
 
-function initOnMapBuilded() {
+function onPeriodReservationsLoaded(reservations) {
     $("#errorMessage").html("");
     getWorkplaces(initOnWorkplaces);
-
-
 }
 
 // checks if the selected dates are for one day or a time period
 // and calls their function to build the map
 function initOnWorkplaces() {
-
-    if (parsedStartDate < parsedEndDate) {
+    if (startDate < endDate) {
         buildPeriodMap();
     }
-
 }
 
 // on document ready load datepicker and set dates to today
@@ -124,7 +93,6 @@ $(document).ready(function () {
 
 $(window).resize(function () {
     resizerWithPanel();
-
 });
 
 function resizerWithPanel() {
@@ -144,43 +112,19 @@ function resizerWithPanel() {
 }
 
 
-// gets the selected start and end date
-// parses their values to millis since 1970
+// gets selected start + end date from date picker
 function defineDate() {
-    // get Values from Datepicker
-    startDate = $("#actualDateStart").val();
-    endDate = $("#actualDateEnd").val();
-    console.log(startDate);
-    // parse to actual Time Zone. Start at 0am and end at 23:59:59:999pm
-    var realTimezoneStartDate = new Date(startDate);
-    console.log("Date: " + realTimezoneStartDate);
-    var realTimezoneEndDate = new Date(endDate);
+    startDate = JSJoda.LocalDate.parse($("#actualDateStart").val());
+    endDate = JSJoda.LocalDate.parse($("#actualDateEnd").val());
 
-    if (realTimezoneStartDate > realTimezoneEndDate) {
+    if (startDate.isAfter(endDate)) {
+        endDate = startDate;
         $("#datepickerEnd").val($("#datepickerStart").val());
         $("#actualDateEnd").val($("#actualDateStart").val());
-        endDate = $("#actualDateEnd").val();
-        realTimezoneEndDate = new Date(endDate);
-    }
-    var timezoneOffset = realTimezoneStartDate.getTimezoneOffset();
-    realTimezoneStartDate.setMinutes(realTimezoneStartDate.getMinutes() + timezoneOffset);
-    realTimezoneEndDate.setMinutes(realTimezoneEndDate.getMinutes() + timezoneOffset);
-    realTimezoneEndDate.setMilliseconds(realTimezoneEndDate.getMilliseconds() + MILLISPERDAY - 1);
-    //parse to Milliseconds
-    parsedStartDate = realTimezoneStartDate.getTime();
-    parsedEndDate = realTimezoneEndDate.getTime();
-
-
-    //check if summer or wintertime
-    var timeOffset = ((parsedEndDate - parsedStartDate + 1) / MILLISPERDAY);
-    if (timeOffset % 1 > 0) {
-        parsedEndDate -= 3600000;
-    } else if (timeOffset % 1 < 0) {
-        parsedStartDate -= 3600000;
     }
 
+    console.log("startDate = " + startDate + ", endDate = " + endDate);
 
-    // Update
     updateCheckedWeekdays();
     initialize();
 }
@@ -189,42 +133,38 @@ function defineDate() {
 // adds an reservation object for every day in a time period to a list
 // and returns the list
 function generateAllReservationDays() {
-    allReservationDays = [];
+    var reservations = [];
     for (var i = 0; i < periodReservations.length; i++) {
         // checks if reservation is for a time period or for one day and adds
         // the reservations to the list
-        if (periodReservations[i].date < periodReservations[i].endDate) {
-            for (var j = periodReservations[i].date; j <= periodReservations[i].endDate; j = j
-                + MILLISPERDAY) {
+        if (periodReservations[i].startDate < periodReservations[i].endDate) {
+            for (var currentDate = periodReservations[i].startDate;
+                 currentDate <= periodReservations[i].endDate;
+                 currentDate = currentDate.plusDays(1)) {
 
-
-                var reservation = {};
-                reservation.date = j;
-                reservation.workplaceId = periodReservations[i].workplace.id;
-                if (reservation.date >= parsedStartDate
-                    && reservation.date <= parsedEndDate) {
-                    allReservationDays.push(reservation);
+                var reservation = {
+                    "date": currentDate,
+                    "workplaceId": periodReservations[i].workplace.id
+                };
+                if (reservation.date >= startDate && reservation.date <= endDate) {
+                    reservations.push(reservation);
                 }
             }
         } else {
-
-
-            var reservation = {};
-            reservation.date = periodReservations[i].date;
-            reservation.workplaceId = periodReservations[i].workplace.id;
-            allReservationDays.push(reservation);
+            reservations.push({
+                "date": periodReservations[i].date,
+                "workplaceId": periodReservations[i].workplace.id
+            });
         }
     }
 
     $('#monthYearPicker').datepicker("refresh");
 
-
-    return allReservationDays;
+    return reservations;
 }
 
 // creates the office map for a time period
 function buildPeriodMap() {
-
     var allReservationDays = generateAllReservationDays();
 
     // creates and adds the office background to the div container
@@ -271,7 +211,7 @@ function buildPeriodMap() {
             }
         }
 
-        if (selWorkplace == workplaces[i].id) {
+        if (selectedWorkplaceId == workplaces[i].id) {
             if (status == "available") {
                 workplaceImg.attr("class", "workplace pulsation");
                 selectedStatus = "available";
@@ -301,13 +241,20 @@ function buildPeriodMap() {
     }
 }
 
-//caclulates counter for adding one of the three images to a workplace
+// calculates counter for adding one of the three images to a workplace
 function calcCounter(i) {
     var counter = 0;
 
-    //Weekdays selected
-    if (!noWeekdayChecked) {
+    if (noWeekdayChecked) {
+        // no weekdays selected
+        for (var j = 0; j < allReservationDays.length; j++) {
+            if (workplaces[i].id == allReservationDays[j].workplaceId) {
+                counter++;
+            }
+        }
 
+    } else {
+        // weekdays selected
         for (var j = 0; j < weekdayDateList.length; j++) {
             for (var k = 0; k < allReservationDays.length; k++) {
                 if (workplaces[i].id == allReservationDays[k].id
@@ -317,26 +264,18 @@ function calcCounter(i) {
             }
         }
 
-    } else { //no weekdays selected
-
-        for (var j = 0; j < allReservationDays.length; j++) {
-            if (workplaces[i].id == allReservationDays[j].workplaceId) {
-                counter++;
-            }
-        }
-
     }
 
     return counter;
 }
 
 
-//lets a workplace pulse and calls initCalendar() and inputChanged() on click
+//lets a workplace pulse and calls initCalendar() and initOnCalcDates() on click
 function pulseOnClick(workplaceImg) {
 
     workplaceImg
         .click(function () {
-            selWorkplace = $(this).data("workplaceId");
+            selectedWorkplaceId = $(this).data("workplaceId");
             $('.pulsation').toggleClass('pulsation');
             var selWorkplaceName = $(this).data("workplaceName");
             var selWorkplaceEquipment = $(this).data("workplaceEquipment");
@@ -349,8 +288,8 @@ function pulseOnClick(workplaceImg) {
                 selectedStatus = "reserved";
             }
             initCalendar();
-            inputChanged();
-            document.getElementById("accordion").scrollIntoView({ behavior: 'smooth'});
+            initOnCalcDates();
+            document.getElementById("accordion").scrollIntoView({behavior: 'smooth'});
         });
 
 
@@ -366,16 +305,13 @@ function getWorkplaces(callback) {
     });
 }
 
-//http request to get all reservation between parsedStartDate and parsedEndDate
-function getPeriodReservations(callback) {
+function getPeriodReservations() {
     $.ajax(
         {
-            url: "/api/getperiodreservations?startDate=" + parsedStartDate
-                + "&endDate=" + parsedEndDate,
+            url: "/api/getperiodreservations?startDate=" + startDate.toString() + "&endDate=" + endDate.toString(),
             type: "GET",
             success: function (response) {
-                periodReservations = response;
-                callback.call();
+                onPeriodReservationsLoaded(response);
             }
         }).fail(function () {
         alert("error");
@@ -393,24 +329,25 @@ function initCalendar() {
             changeYear: true,
             // if a workplace is selected highlight its reservation days by applying class event to it
             beforeShowDay: function (date) {
-                if (selWorkplace != null) {
+                var localDate = JSJoda.LocalDate.ofInstant(JSJoda.Instant.ofEpochMilli(date.getTime()));
+                if (selectedWorkplaceId != null) {
                     //check if selected workplace has a reservation for this date
-                    var highlight = workplaceReservationDays[date];
+                    var highlight = workplaceReservationDays[localDate];
                     if (highlight) {
                         return [
                             true,
                             "event",
                             "Reserviert von: "
-                            + workplaceReservationDays[date].user];
+                            + workplaceReservationDays[localDate].user];
                     }
                 }
                 // if date is in selected Timespan
 
-                if (date.getTime() >= parsedStartDate && date.getTime() <= parsedEndDate) {
+                if (localDate.isAfter(startDate) && localDate.isBefore(endDate)) {
                     if (weekdaysShown) {
                         // for all selected weekdays: check if they match the given date
                         for (var i = 0; i < weekdayDateList.length; i++) {
-                            if ((weekdayDateList[i].parsedStartDate) == date.getTime() || (weekdayDateList[i].parsedStartDate) == (date.getTime() + 3600000)) {
+                            if (weekdayDateList[i].startDate === localDate) {
                                 return [
                                     true,
                                     "eventChosen",
@@ -437,29 +374,29 @@ function initCalendar() {
                 return [true, '', 'Verfügbar'];
             },
             onChangeMonthYear: function (year, month) {
-                selMonthYear = new Date(year, month - 1);
-                if (selWorkplace != null) {
-                    inputChanged();
+                selMonthYear = JSJoda.LocalDate.of(year, month, 1);
+                if (selectedWorkplaceId != null) {
+                    initOnCalcDates();
                 }
             }
         });
 }
 
-//http request to get a list of all reservations for the selected workplace between
-//parsedStartDate and parsedEndDate
+//http request to get a list of all reservations for the selected workplace in given time period
 function getWorkplaceReservations(callback) {
+    var startOfMonth = selMonthYear.withDayOfMonth(1);
+    var endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
     $.ajax(
         {
-            url: "/api/getworkplacereservations?startDate=" + monthStartDate
-                + "&endDate=" + monthEndDate + "&workplaceId="
-                + selWorkplace,
+            url: "/api/getworkplacereservations?startDate=" + startOfMonth.toString()
+                + "&endDate=" + endOfMonth.toString() + "&workplaceId=" + selectedWorkplaceId,
             type: "GET",
             success: function (response) {
                 workplaceReservations = response;
                 callback.call();
             }
         }).fail(function () {
-        alert("error");
+        alert("error loading workplace reservations");
     });
 }
 
