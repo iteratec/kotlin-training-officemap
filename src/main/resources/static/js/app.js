@@ -382,6 +382,91 @@ function initCalendar() {
         });
 }
 
+//shows the selected start and end date in the status bar
+function showDate() {
+    var selStartDate = $("#datepickerStart").val();
+    $("#selectedStartDate").html(selStartDate);
+
+    var selEndDate = $("#datepickerEnd").val();
+    $("#selectedEndDate").html(selEndDate);
+
+    if (weekdaysShown) {
+        showWeekdays();
+    }
+}
+
+// creates a list with all dates which are in the time period and fit on of the
+// selected weekdays
+function searchWeekdays(checkedWeekdays) {
+    var weekdays = [];
+    for (var i = 0; i < checkedWeekdays.length; i++) {
+        var currentDate = startDate;
+
+        while (currentDate <= endDate) {
+            if (currentDate.dayOfWeek() === checkedWeekdays[i]) {
+                weekdayDateList.append({date: currentDate});
+            }
+            currentDate = currentDate.plusDays(1)
+        }
+    }
+
+    return weekdays;
+}
+
+// checks how many weekdays are in the selected time period and shows them
+function showWeekdays() {
+    // IDs of the Elements in HTML file
+    var weekdays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+
+    // Check if the selected timespan is more or equal than 7 days
+    if (startDate.until(endDate, JSJoda.ChronoUnit.DAYS) >= 7) {
+        $(".weekday").show();
+    } else { // only show weekdays in the selected timspan
+        $(".weekday").hide();
+        for (var date = startDate; date <= endDate; date = date.plusDays(1)) {
+            $("#" + weekdays[date.dayOfWeek() - 1]).show();
+        }
+    }
+}
+
+function buildMap(imageSrc, imageID, wpID, pulse, workplaces) {
+
+    var backgroundImage = $('<img>');
+    backgroundImage.attr("src", "/images/westhafentower.png");
+    backgroundImage.attr("class", "officemap");
+    if (imageID) {
+        backgroundImage.attr("id", "office");
+    }
+
+    var divContainer = $("#image");
+    divContainer.html("");
+    divContainer.append(backgroundImage);
+
+    for (var i = 0; i < workplaces.length; i++) {
+        var image = imageSrc;
+        var workplaceImg = $('<img>');
+        var title = workplaces[i].name;
+        workplaceImg.attr("title", title);
+        workplaceImg.attr("src", image);
+        workplaceImg.attr("class", "workplace");
+        workplaceImg.css("left", workplaces[i].x + "px");
+        workplaceImg.css("top", workplaces[i].y + "px");
+        workplaceImg.data("workplaceName", workplaces[i].name);
+        workplaceImg.data("workplaceEquipment", workplaces[i].equipment);
+        workplaceImg.data("x", workplaces[i].x);
+        workplaceImg.data("y", workplaces[i].y);
+
+        if (wpID) {
+            workplaceImg.data("workplaceId", workplaces[i].id);
+        }
+
+        if (pulse) {
+            pulseOnClick(workplaceImg);
+        }
+        $('#image').append(workplaceImg);
+    }
+}
+
 //http request to get a list of all reservations for the selected workplace in given time period
 function getWorkplaceReservations(callback) {
     var startOfMonth = selMonthYear.withDayOfMonth(1);
@@ -430,4 +515,85 @@ function generateWorkplaceReservationDays() {
     }
     // refreshes the calendar to show reservations
     $('#monthYearPicker').datepicker("refresh");
+}
+
+function onClickWeekdays() {
+    if (!weekdaysShown) {
+        weekdaysShown = true;
+        showWeekdays();
+        updateCheckedWeekdays();
+        $("#selectWeekdays").val("keine Wochentage");
+    } else {
+        weekdaysShown = false;
+        checkedWeekdays = [];
+        $(".weekday").hide();
+        initialize();
+        $("#selectWeekdays").val("Wochentage auswählen");
+    }
+}
+
+// empties checkedWeekdays and adds the selected ones
+function updateCheckedWeekdays() {
+    checkedWeekdays = [];
+    $('.weekday:checked').each(function (i) {
+        checkedWeekdays[i] = $(this).val();
+    });
+
+    weekdayDateList = searchWeekdays(checkedWeekdays);
+
+    noWeekdayChecked = true;
+    for (var i = 0; i < weekdayDateList.length; i++) {
+        if (checkedWeekdays.indexOf(weekdayDateList[i].date.dayOfWeek()) !== -1) {
+            noWeekdayChecked = false;
+        }
+    }
+
+    initialize();
+}
+
+//if all required data is provided add reservation objects to reservationList
+//and call postReservation()
+//else return error message
+function calcDays() {
+    // check if user is selected
+    if ($('#user').val() === '') {
+        // check if workplace is selected
+        if (selectedWorkplaceId == null) {
+            $("#errorMessage").html("Bitte einen Namen und Arbeitsplatz angeben!");
+        } else {
+            $("#errorMessage").html("Bitte einen Namen angeben!");
+        }
+    } else if (selectedWorkplaceId == null) { // check if workplace is selected
+        $("#errorMessage").html("Bitte einen Arbeitsplatz auswählen!");
+    } else if (selectedStatus === "reserved") { // check if workplace is already reserved
+        $("#errorMessage").html("Arbeitsplatz ist schon vergeben!");
+    } else if (noWeekdayChecked && weekdaysShown) { // check if weekdays are selected
+        $("#errorMessage").html("Kein Wochentag ausgewählt!");
+    } else if (startDate < JSJoda.LocalDate.now()) { // check if date is in past time
+        $("#errorMessage").html("Liegt in der Vergangenheit!");
+    } else {
+        var reservations = [];
+        if (weekdaysShown) {
+            for (var i = 0; i < weekdayDateList.length; i++) {
+                reservations.push({
+                    "workplaceId": selectedWorkplaceId,
+                    "startDate": weekdayDateList[i].date.toString(),
+                    "endDate": weekdayDateList[i].date.toString()
+                });
+            }
+        } else {
+            reservations.push({
+                "workplaceId": selectedWorkplaceId,
+                "startDate": startDate.toString(),
+                "endDate": endDate.toString()
+            });
+        }
+        postReservations(reservations)
+            .done(function () {
+                var successMessage = $('#successMessage');
+                successMessage.html("Reservierung erfolgreich!");
+                successMessage.show(0).delay(2000).fadeOut(400);
+                initialize();
+            });
+    }
 }
