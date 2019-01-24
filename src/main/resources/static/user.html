@@ -23,19 +23,15 @@
     <script type="text/javascript" src="js/js-joda.min.js"></script>
     <script type="text/javascript" src="js/api.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="js/reservations_table.js"></script>
     <script type="text/javascript">
 
-        var userReservations = null;
-        var userName = null;
-
-        // get workplaces and build map on document ready
         $(document).ready(function () {
             loadUsername().done(function (response) {
-                userName = response.name;
-                $('#user').val(userName);
-                loadUserData();
-            }
-        )
+                    $('#user').val(response.name);
+                    loadUserData();
+                }
+            );
             updateWorkplaces();
 
             $("#search-form").submit(function () {
@@ -43,188 +39,7 @@
             });
         });
 
-        function updateWorkplaces() {
-            loadWorkplaces()
-                .done(function (response) {
-                    workplaces = response;
-
-                    $('#reservationTable').html("");
-                    buildMap("/images/neutral.png", false, false, false, workplaces);
-                    loadUserData();
-                })
-        }
-
-        // if a user name is inserted gets his reservations and calls
-        // buildReservationTable
-        // else shows an error message
-        function loadUserData() {
-            if (!($('#user').val() === '')) {
-                $('#errorMessage').html("");
-                $('#selectedUser').html("von " + $('#user').val());
-                getUserReservations(buildReservationTable);
-            } else {
-                $('#selectedUser').html("");
-                $('#errorMessage').html("Bitte einen Namen eintragen!");
-                $('#reservationTable').html("Bitte Mitarbeiter auswählen und anzeigen lassen!")
-            }
-        }
-
-
-        // http request to get a list of all reservations for a user
-        function getUserReservations(callback) {
-            var user = document.getElementById("user").value;
-            $.ajax({
-                url: "/api/getuserreservations?user=" + user,
-                type: "GET",
-                success: function (response) {
-                    userReservations = response.map(stringDatesToLocalDates);
-                    callback.call();
-                }
-            }).fail(function () {
-                alert("error");
-            });
-        }
-
-        // gets all checked checkboxes
-        // pushes the checked reservations to a list
-        // calls deleteReservations
-        function getCheckedReservations() {
-            var tableInputs = $('.workplaceCheckbox');
-            var checkboxList = [];
-            var j = 0;
-            for (var i = 0; i < tableInputs.length; i++) {
-                if (tableInputs[i].checked === true) {
-                    checkboxList[j] = tableInputs[i].id;
-                    j++;
-                }
-            }
-            if (checkboxList.length === 0) {
-                $('#errorMessage').html("Bitte Reservierungen auswählen!");
-            } else {
-                var deleteReservationRequests = [];
-                checkboxList.forEach(function (checkbox) {
-                    var userReservation = userReservations[checkbox];
-                    deleteReservationRequests.push({
-                        "workplaceId": userReservation.workplace.id,
-                        "startDate": userReservation.date,
-                        "endDate": userReservation.endDate
-                    });
-                });
-                deleteReservations(deleteReservationRequests);
-            }
-        }
-
-        //http request to delete a list of reservations for a user
-        function deleteReservations(deleteReservationRequests) {
-            $.ajax({
-                type: "DELETE",
-                url: "/api/deletereservations",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(deleteReservationRequests)
-            }).done(function () {
-                updateWorkplaces();
-            });
-        }
-
-        // Builds the HTML table out of parsedjson
-        function buildReservationTable() {
-            // Create dynamic table
-            var table = document.createElement("table");
-            table.setAttribute("class", "table table-striped");
-            table.id = "tableId";
-
-            // Create a table header row
-            var header = table.createTHead();
-            var headerRow = header.insertRow(0);
-
-            var thWorkplace = document.createElement("th"); // TABLE HEADER.
-            thWorkplace.innerHTML = "Arbeitsplatz";
-            headerRow.appendChild(thWorkplace);
-
-            var thDate = document.createElement("th");// TABLE HEADER.
-            thDate.innerHTML = "Datum";
-            headerRow.appendChild(thDate);
-
-            var thDelete = document.createElement("th"); // TABLE HEADER.
-            var thCheckbox = document.createElement('input');
-            thCheckbox.id = "thCheckbox";
-            thCheckbox.type = "checkbox";
-            thCheckbox.onchange = function () {
-                if ($('#thCheckbox').prop('checked')) {
-                    $('.workplaceCheckbox').prop('checked', true);
-                } else {
-                    $('.workplaceCheckbox').prop('checked', false);
-                }
-            };
-            thDelete.appendChild(thCheckbox);
-            headerRow.appendChild(thDelete);
-
-            // Create table body and fill it with userReservations data
-            var body = table.createTBody();
-            var today = JSJoda.LocalDate.now();
-
-            for (var i = 0; i < userReservations.length; i++) {
-                var userReservation = userReservations[i];
-
-                if (!userReservation.endDate.isBefore(today)) {
-                    tr = body.insertRow(-1);
-                    tr.classList.add("Reservierung");
-
-                    var workplaceCell = document.createElement("td");
-                    workplaceCell.innerHTML = userReservation.workplace.name;
-                    tr.appendChild(workplaceCell);
-
-                    var dateCell = document.createElement("td");
-
-                    if (userReservation.startDate.isEqual(userReservation.endDate)) {
-                        dateCell.innerHTML = userReservation.startDate.toString();
-                    } else {
-                        dateCell.innerHTML = userReservation.startDate + " - " + userReservation.endDate;
-                    }
-                    tr.appendChild(dateCell);
-
-                    var checkboxCell = document.createElement("td");
-                    var checkbox = document.createElement('input');
-                    checkbox.className += "workplaceCheckbox";
-                    checkbox.type = "checkbox";
-                    checkbox.id = i;
-                    checkboxCell.appendChild(checkbox);
-                    tr.appendChild(checkboxCell);
-                }
-            }
-
-            // Append the created table to the div container
-            var divContainer = document.getElementById("reservationTable");
-            divContainer.innerHTML = "";
-            divContainer.appendChild(table);
-
-            defineAsDataTable();
-        }
-
-        // Integration of jQuery data tables
-        function defineAsDataTable() {
-            $('#tableId').DataTable({
-                // Add german language plug-in
-                "language": {
-                    "url": "/datatables/plug-ins/de_DE.json"
-                },
-                // deactivate sorting for checkboxes and set dates column datatype to
-                // de_date
-                "columnDefs": [{
-                    "orderable": false,
-                    "targets": 2
-                }, {
-                    type: 'de_date',
-                    targets: 1
-                }],
-                // add filter option "all"
-                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Alle"]]
-            });
-        }
-
-
     </script>
-
 </head>
 <body>
 <div class="container-fluid">
@@ -300,7 +115,7 @@
                         <input type="submit" id="anzeige-button" class="btn btn-default"
                                value="Anzeigen" onclick="loadUserData(); return false"/>
                         <input type="submit" class="btn btn-default" id="deleteReservations"
-                               value="Löschen" onclick="getCheckedReservations(); return false"/>
+                               value="Löschen" onclick="deleteCheckedReservations(); return false"/>
                     </form>
 
                     <div id="errorMessage" style="color: red"></div>
@@ -308,9 +123,7 @@
                     <p>Mit einem Klick auf "Löschen" werden alle Reservierungen
                         gelöscht, die in der Tabelle markiert wurden.</p>
                     <h4>Reservierungen:</h4>
-                    <div id="reservationTable">Bitte Mitarbeiter auswählen und
-                        anzeigen lassen!
-                    </div>
+                    <div id="reservationTable">Bitte Mitarbeiter auswählen und anzeigen lassen!</div>
                 </div>
                 <div id="selection" class="col-md-9 col-lg-9">
                     <h4>Arbeitsplatzbelegung:</h4>
