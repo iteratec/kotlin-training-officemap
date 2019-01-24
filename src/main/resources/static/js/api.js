@@ -57,3 +57,18 @@ function createWorkplace(workplace) {
 function loadReservationsByUsername(username) {
     return $.get("/api/getuserreservations?user=" + username);
 }
+
+/**
+ * Deletes reservations specified by their IDs.
+ * @param reservationIds A list of reservation IDs that should be deleted.
+ */
+function deleteReservations(reservationIds) {
+    return $.ajax({
+        type: "DELETE",
+        url: "/api/deletereservations",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            "reservationIds": reservationIds
+        })
+    });
+}

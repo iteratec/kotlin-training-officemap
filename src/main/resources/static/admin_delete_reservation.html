@@ -25,7 +25,6 @@
     <script type="text/javascript">
 
         var userReservations = [];
-        var selectedReservations = [];
 
         // get workplaces and build map on document ready
         $(document).ready(function () {
@@ -79,36 +78,23 @@
             var checkboxList = [];
             var j = 0;
             for (var i = 0; i < tableInputs.length; i++) {
-                if (tableInputs[i].checked == true) {
+                if (tableInputs[i].checked === true) {
                     checkboxList[j] = tableInputs[i].id;
                     j++;
                 }
             }
-            if (checkboxList.length == 0) {
+            if (checkboxList.length === 0) {
                 $('#errorMessage').html("Bitte Reservierungen auswählen!");
             } else {
-                for (var i = 0; i < checkboxList.length; i++) {
-                    var reservation = {
-                        workplaceId: userReservations[checkboxList[i]].workplace.id,
-                        startDate: userReservations[checkboxList[i]].date,
-                        endDate: userReservations[checkboxList[i]].endDate
-                    };
-                    selectedReservations.push(reservation);
-                }
-                deleteReservations();
-            }
-        }
+                var reservationIdsToDelete = checkboxList.map(function (checkbox) {
+                    return userReservations[checkbox].id;
+                });
 
-        //http request to delete a list of reservations for a user
-        function deleteReservations() {
-            $.ajax({
-                type: "DELETE",
-                url: "/api/deletereservations",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(selectedReservations)
-            }).done(function () {
-                updateWorkplaces();
-            });
+                deleteReservations(reservationIdsToDelete)
+                    .always(function () {
+                        updateWorkplaces();
+                    });
+            }
         }
 
         // Builds the HTML table out of parsedjson

@@ -186,21 +186,14 @@ class ReservationServiceTest
     inner class DeleteReservations {
 
         @Test
-        fun `delete reservation of non-existing workplace shall throw exception`() {
-            assertThrows<DoesNotExistException> {
-                service.deleteReservations(listOf(DeleteReservationRequest(123, today, today)))
-            }
-        }
-
-        @Test
         fun `delete non-existing reservation should not throw`() {
-            service.deleteReservations(listOf(DeleteReservationRequest(workplace.id!!, today, today)))
+            service.deleteReservations(listOf(111111))
         }
 
         @Test
         fun `delete non-existing reservation should not touch other reservations`() {
             reservationRepository.saveAll(listOf(reservationYesterday, reservationTomorrow))
-            service.deleteReservations(listOf(DeleteReservationRequest(workplace.id!!, today, today)))
+            service.deleteReservations(listOf(1111111))
             assertThat(reservationRepository.findAll(), containsInAnyOrder(reservationYesterday, reservationTomorrow))
         }
 
@@ -208,11 +201,7 @@ class ReservationServiceTest
         fun `delete existing reservation`() {
             reservationRepository.save(reservationToday)
             assertThat(reservationRepository.findAll(), containsInAnyOrder(reservationToday))
-            service.deleteReservations(listOf(DeleteReservationRequest(
-                    workplace.id!!,
-                    today,
-                    today
-            )))
+            service.deleteReservations(listOf(reservationToday.id!!))
             assertThat(reservationRepository.findAll(), empty())
         }
 

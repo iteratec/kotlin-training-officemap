@@ -95,17 +95,15 @@ class ReservationController
     @DeleteMapping("/deletereservations", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ApiOperation(value = "deleteReservations", notes = "Deletes a list of reservations from the database.")
     @ApiResponses(value = [ApiResponse(code = 200, message = "Entry has been deleted or does not exist")])
-    fun deleteReservations(@RequestBody deleteReservationDTOs: List<DeleteReservationDTO>) {
-        reservationService.deleteReservations(deleteReservationDTOs.map {
-            DeleteReservationRequest(
-                    it.workplaceId,
-                    it.startDate,
-                    it.endDate
-            )
-        })
+    fun deleteReservations(@RequestBody deleteReservationsDTOs: DeleteReservationsDTO) {
+        reservationService.deleteReservations(deleteReservationsDTOs.reservationIds)
     }
 
 }
+
+data class DeleteReservationsDTO(
+        val reservationIds: List<Long>
+)
 
 fun Reservation.toReservationDTO() = ReservationDTO(
         id!!,
