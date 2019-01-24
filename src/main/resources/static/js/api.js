@@ -33,7 +33,7 @@ function postReservations(reservations) {
  */
 function deleteWorkplace(workplaceId) {
     return $.ajax({
-        url: "/api/workplaces/" + workplaceId,
+        url: "/api/workplaces/" + encodeURIComponent(workplaceId),
         type: "DELETE"
     });
 }
@@ -62,7 +62,7 @@ function createWorkplace(workplace) {
  */
 function updateWorkplace(workplace) {
     return $.ajax({
-        url: "/api/workplaces/" + workplace.id,
+        url: "/api/workplaces/" + encodeURIComponent(workplace.id),
         type: "PUT",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(workplace)
@@ -73,21 +73,28 @@ function updateWorkplace(workplace) {
  * Loads all reservations of a username.
  */
 function loadReservationsByUsername(username) {
-    return $.get("/api/getuserreservations?user=" + username);
+    return $.get("/api/getuserreservations?user=" + encodeURIComponent(username));
 }
 
 /**
  * Loads reservations by time period.
  */
 function loadReservationsByPeriod(startDate, endDate) {
-    return $.get("/api/getperiodreservations?startDate=" + startDate.toString() + "&endDate=" + endDate.toString());
+    return $.get(
+        "/api/getperiodreservations?startDate=" + encodeURIComponent(startDate.toString())
+        + "&endDate=" + encodeURIComponent(endDate.toString())
+    );
 }
 
 /**
  * Loads reservations by workplace ID and time period.
  */
 function loadReservationsByWorkplaceAndPeriod(workplaceId, startDate, endDate) {
-    return $.get("/api/getworkplacereservations?startDate=" + startDate.toString() + "&endDate=" + endDate.toString() + "&workplaceId=" + workplaceId);
+    return $.get(
+        "/api/getworkplacereservations?startDate=" + encodeURIComponent(startDate.toString())
+        + "&endDate=" + encodeURIComponent(endDate.toString())
+        + "&workplaceId=" + encodeURIComponent(workplaceId)
+    );
 }
 
 /**
