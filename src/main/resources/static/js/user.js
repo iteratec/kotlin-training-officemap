@@ -1,4 +1,3 @@
-var workplaces = null;
 var userReservations = null;
 var user = null;
 var userName = null;
@@ -7,35 +6,29 @@ var selectedReservations = [];
 // get workplaces and build map on document ready
 $(document).ready(function () {
     getUserName();
-    getWorkplaces(workplaceInitializer);
-    submitFunction();
-});
+    updateWorkplaces();
 
-
-function submitFunction() {
     $("#search-form").submit(function () {
         loadUserData();
-        return false;
     });
-}
+});
 
+function updateWorkplaces() {
+    loadWorkplaces()
+        .done(function (response) {
+            workplaces = response;
 
-function initOnWorkplacesLoaded() {
-    $('#reservationTable').html("");
-    buildMap("/images/neutral.png", false, false, false, workplaces);
-    loadUserData();
-}
-
-function workplaceInitializer(workplaces) {
-    buildMap("/images/neutral.png", false, false, false, workplaces);
+            $('#reservationTable').html("");
+            buildMap("/images/neutral.png", false, false, false, workplaces);
+            loadUserData();
+        })
 }
 
 // if a user name is inserted gets his reservations and calls
 // buildReservationTable
 // else shows an error message
 function loadUserData() {
-
-    if (!($('#user').val() == '')) {
+    if (!($('#user').val() === '')) {
         $('#errorMessage').html("");
         $('#selectedUser').html("von " + $('#user').val());
         getUserReservations(buildReservationTable);
@@ -98,8 +91,7 @@ function deleteReservations() {
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(selectedReservations)
     }).done(function () {
-        getWorkplaces(initOnWorkplacesLoaded);
-        loadUserData();
+        updateWorkplaces();
     });
 }
 
@@ -215,7 +207,7 @@ function getUserName() {
         url: "/api/user",
         type: "GET",
         success: function (response) {
-            userName = response.name
+            userName = response.name;
             $('#user').val(userName);
             loadUserData();
         }

@@ -1,22 +1,17 @@
-var workplaces = null;
+var workplaces = [];
 
-// on document ready call initialize
 $(document).ready(function () {
-    initialize();
+    updateWorkplaces();
 });
 
-
-// calls getWorkplaces and initOnWorkplaces on callback
-function initialize() {
-    getWorkplaces(initOnWorkplaces);
+function updateWorkplaces() {
+    loadWorkplaces()
+        .done(function (response) {
+            workplaces = response;
+            buildMap("/images/available.png", "office", true, false, workplaces);
+            getCoordinates();
+        });
 }
-
-// calls buildMap and getCoordinates
-function initOnWorkplaces(workplaces) {
-    buildMap("/images/available.png", "office", true, false, workplaces);
-    getCoordinates();
-}
-
 
 // gets the coordinates of a click on the office map
 function getCoordinates() {
@@ -28,12 +23,6 @@ function getCoordinates() {
                 $("#xCoordinate").val(posX);
                 $("#yCoordinate").val(posY);
             });
-}
-
-function submitFunction() {
-    $("#add-form").submit(function () {
-        return false;
-    });
 }
 
 // http request to add a workplace to the database
@@ -60,7 +49,7 @@ function addNewWorkplace() {
         data: JSON.stringify(workplace),
         success: function (response) {
             message.html("Arbeitsplatz erfolgreich erstellt!");
-            initialize();
+            updateWorkplaces();
         }
         //TODO show message if adding a new workplace failed
     })

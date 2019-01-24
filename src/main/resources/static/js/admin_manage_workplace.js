@@ -1,41 +1,32 @@
-var workplaces = null;
-var selWorkplace = null;
-var selWorkplaceId = null;
+var selectedWorkplaceId = null;
 
 
 //on document ready call initialize
 $(document).ready(function () {
-    initialize();
-
-});
-
-$(window).resize(function () {
-    console.log($(this).height() + " " + $(this).width())
-
+    updateWorkplaces();
 });
 
 
-// calls getWorkplaces and buildMap on callback
-function initialize() {
-    getWorkplaces(workplaceInitializer);
+function updateWorkplaces() {
+    loadWorkplaces()
+        .done(function (response) {
+            workplaces = response;
 
-}
-
-function workplaceInitializer(workplaces) {
-    buildMap("/images/equipment.png", false, true, true, workplaces);
+            buildMap("/images/equipment.png", false, true, true, workplaces);
+        });
 }
 
 function setChanges() {
     var message = $("#message");
     message.html("");
 
-    if(!selWorkplaceId){
+    if (!selectedWorkplaceId) {
         message.html("Bitte einen Arbeitsplatz auswählen!");
         return;
     }
 
     var workplace = {
-        id: selWorkplaceId,
+        id: selectedWorkplaceId,
         name: ($("#workplaceName").val()),
         x: ($("#workplaceX").val()),
         y: ($("#workplaceY").val()),
@@ -43,12 +34,12 @@ function setChanges() {
         equipment: ($("#workplaceEquipment").val())
     };
 
-    if(workplace.name == ""){
+    if (workplace.name === "") {
         message.html("Der Name eines Arbeitsplatzes darf nicht leer sein!");
         return;
     }
 
-    if(isNaN(workplace.x) || isNaN(workplace.y) || workplace.x == "" || workplace.y == ""){
+    if (isNaN(workplace.x) || isNaN(workplace.y) || workplace.x === "" || workplace.y === "") {
         message.html("Die Koordinaten eines Arbeitsplatzes müssen eine Nummer sein!");
         return;
     }
@@ -59,12 +50,13 @@ function setChanges() {
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(workplace),
         success: function (response) {
-            initialize();
+            updateWorkplaces();
         }
     }).fail(function () {
         alert("error");
     });
 }
+
 //lets a workplace pulse on click and saves the ID to selectedWorkplaceId
 function pulseOnClick(workplaceImg) {
     workplaceImg.click(function () {
@@ -73,7 +65,7 @@ function pulseOnClick(workplaceImg) {
         var selWorkplaceEquipment = $(this).data("workplaceEquipment");
         var selWorkplaceX = $(this).data("x");
         var selWorkplaceY = $(this).data("y");
-        selWorkplaceId = $(this).data("workplaceId");
+        selectedWorkplaceId = $(this).data("workplaceId");
         document.getElementById("workplaceName").value = selWorkplaceName;
         document.getElementById("workplaceEquipment").value = selWorkplaceEquipment;
         document.getElementById("workplaceX").value = selWorkplaceX;

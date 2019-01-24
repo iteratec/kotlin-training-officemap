@@ -39,14 +39,15 @@ function initialize() {
 function onPeriodReservationsLoaded(reservations) {
     periodReservations = reservations.map(stringDatesToLocalDates);
     $("#errorMessage").html("");
-    getWorkplaces(buildPeriodMap);
+    updateWorkplaces();
 }
 
-function stringDatesToLocalDates(reservation) {
-    // parse dates as LocalDate objects
-    reservation.startDate = JSJoda.LocalDate.parse(reservation.startDate);
-    reservation.endDate = JSJoda.LocalDate.parse(reservation.endDate);
-    return reservation;
+function updateWorkplaces() {
+    loadWorkplaces()
+        .done(function (response) {
+            workplaces = response;
+            buildPeriodMap();
+        })
 }
 
 // on document ready load datepicker and set dates to today
@@ -286,16 +287,6 @@ function pulseOnClick(workplaceImg) {
         });
 
 
-}
-
-// http request to get a list of all workplaces
-function getWorkplaces(callback) {
-    $.get("/api/allworkplaces", function (data) {
-        workplaces = data;
-        callback.call();
-    }).fail(function () {
-        alert("error");
-    });
 }
 
 function getPeriodReservations() {

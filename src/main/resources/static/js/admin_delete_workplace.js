@@ -1,27 +1,18 @@
-var workplaces = null;
-var selWorkplace = null;
+var workplaces = [];
+var selectedWorkplaceId = null;
 
 //on document ready call initialize
 $(document).ready(function () {
-    initialize();
-
-});
-
-$(window).resize(function () {
-    console.log($(this).height() + " " + $(this).width())
-
+    updateWorkplaces();
 });
 
 
-// calls getWorkplaces and buildMap on callback
-function initialize() {
-    getWorkplaces(workplaceInitializer);
+function updateWorkplaces() {
+    loadWorkplaces().done(function (response) {
+        workplaces = response;
 
-}
-
-function workplaceInitializer(workplaces) {
-    buildMap("/images/delete.png", false, true, true, workplaces);
-
+        buildMap("/images/delete.png", false, true, true, workplaces);
+    });
 }
 
 //http request to delete one workplace from the database
@@ -31,10 +22,10 @@ function deleteWorkplace() {
         type: "DELETE",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
-            id: selWorkplace
+            id: selectedWorkplaceId
         }),
         success: function (response) {
-            initialize();
+            updateWorkplaces();
         }
     }).fail(function () {
         alert("error");
@@ -55,9 +46,9 @@ function clickedDelete() {
 function pulseOnClick(workplaceImg) {
     workplaceImg.click(function () {
         $('.pulsation').toggleClass('pulsation');
-        selWorkplace = $(this).data("workplaceId");
-        var selWorkplaceName = $(this).data("workplaceName");
-        document.getElementById("selectedWorkplace").innerHTML = selWorkplaceName;
+        selectedWorkplaceId = $(this).data("workplaceId");
+        var selectedWorkplaceName = $(this).data("workplaceName");
+        document.getElementById("selectedWorkplace").innerHTML = selectedWorkplaceName;
         $(this).addClass("pulsation");
     });
 }
