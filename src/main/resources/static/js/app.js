@@ -188,7 +188,7 @@ function getReservedDays(workplace) {
 }
 
 
-//lets a workplace pulse and calls initCalendar() and initOnCalcDates() on click
+// lets a workplace pulse and calls initCalendar() and updates all on click
 function pulseOnClick(workplaceImg) {
 
     workplaceImg
@@ -200,13 +200,13 @@ function pulseOnClick(workplaceImg) {
             document.getElementById("selectedWorkplace").innerHTML = selWorkplaceName;
             document.getElementById("selectedWorkplaceEquipment").innerHTML = selWorkplaceEquipment;
             $(this).addClass("pulsation");
-            if ($(this).data("status") == "available") {
+            if ($(this).data("status") === "available") {
                 selectedStatus = "available";
             } else {
                 selectedStatus = "reserved";
             }
             initCalendar();
-            initOnCalcDates();
+            updateAll();
             document.getElementById("accordion").scrollIntoView({behavior: 'smooth'});
         });
 

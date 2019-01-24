@@ -131,7 +131,7 @@
                     onChangeMonthYear: function (year, month) {
                         selMonthYear = JSJoda.LocalDate.of(year, month, 1);
                         if (selectedWorkplaceId != null) {
-                            initOnCalcDates();
+                            updateAll();
                         }
                     }
                 });
