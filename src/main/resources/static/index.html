@@ -71,7 +71,7 @@
             console.log("startDate = " + startDate + ", endDate = " + endDate);
 
             updateCheckedWeekdays();
-            initialize();
+            updateAll();
         }
 
 
@@ -197,7 +197,7 @@
                 }
             }
 
-            initialize();
+            updateAll();
         }
 
         //if all required data is provided add reservation objects to reservationList
@@ -242,27 +242,9 @@
                         var successMessage = $('#successMessage');
                         successMessage.html("Reservierung erfolgreich!");
                         successMessage.show(0).delay(2000).fadeOut(400);
-                        initialize();
+                        updateAll();
                     });
             }
-        }
-
-        //http request to get a list of all reservations for the selected workplace in given time period
-        function getWorkplaceReservations(callback) {
-            var startOfMonth = selMonthYear.withDayOfMonth(1);
-            var endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
-            $.ajax(
-                {
-                    url: "/api/getworkplacereservations?startDate=" + startOfMonth.toString()
-                        + "&endDate=" + endOfMonth.toString() + "&workplaceId=" + selectedWorkplaceId,
-                    type: "GET",
-                    success: function (reservations) {
-                        workplaceReservations = reservations.map(stringDatesToLocalDates);
-                        callback.call();
-                    }
-                }).fail(function () {
-                alert("error loading workplace reservations");
-            });
         }
 
         function generateWorkplaceReservationDays() {
@@ -292,57 +274,48 @@
                 weekdaysShown = false;
                 checkedWeekdays = [];
                 $(".weekday").hide();
-                initialize();
+                updateAll();
                 $("#selectWeekdays").val("Wochentage auswählen");
             }
         }
 
 
-        function initOnCalcDates() {
-            getWorkplaceReservations(generateWorkplaceReservationDays);
+        function updateWorkplaceReservationsOfSelectedMonth() {
+            var startOfMonth = selMonthYear.withDayOfMonth(1);
+            var endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
+            loadReservationsByWorkplaceAndPeriod(selectedWorkplaceId, startOfMonth, endOfMonth)
+                .done(function (response) {
+                    workplaceReservations = response.map(stringDatesToLocalDates);
+                    generateWorkplaceReservationDays()
+                });
         }
 
 
-        // checks if the selected dates are valid for one day or a time period
-        // else returns a error message
-        function initialize() {
-            getPeriodReservations();
+        function updateAll() {
+            updatePeriodReservations();
 
             if (selectedWorkplaceId != null) {
-                initOnCalcDates();
+                updateWorkplaceReservationsOfSelectedMonth();
             }
         }
 
-        function onPeriodReservationsLoaded(reservations) {
-            periodReservations = reservations.map(stringDatesToLocalDates);
-            $("#errorMessage").html("");
-            updateWorkplaces();
-        }
-
-
-        function getPeriodReservations() {
-            $.ajax(
-                {
-                    url: "/api/getperiodreservations?startDate=" + startDate.toString() + "&endDate=" + endDate.toString(),
-                    type: "GET",
-                    success: function (response) {
-                        onPeriodReservationsLoaded(response);
-                    }
-                }).fail(function () {
-                alert("error");
-            });
+        function updatePeriodReservations() {
+            loadReservationsByPeriod(startDate, endDate)
+                .done(function (response) {
+                    periodReservations = response.map(stringDatesToLocalDates);
+                    $("#errorMessage").html("");
+                    updateWorkplaces();
+                });
         }
 
     </script>
-
-
 </head>
 <body>
 <div class="container-fluid">
     <div id="topbar" class="row content">
         <div class="col-sm-4 col-md-3 col-lg-2">
-            <a href="/index.html"><img src="/images/iteratec_logo.jpg"
-                                       id="logo"></a>
+            <a href="/index.html"><img src="/images/iteratec_logo.jpg" id="logo"></a>
         </div>
         <div id="officemap" class="col-sm-8 col-md-9 col-lg-10">
             <h3>

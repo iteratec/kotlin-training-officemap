@@ -52,10 +52,36 @@ function createWorkplace(workplace) {
 }
 
 /**
+ * Updates an existing workplace.
+ */
+function updateWorkplace(workplace) {
+    return $.ajax({
+        url: "/api/workplaces/" + workplace.id,
+        type: "PUT",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(workplace)
+    });
+}
+
+/**
  * Loads all reservations of a username.
  */
 function loadReservationsByUsername(username) {
     return $.get("/api/getuserreservations?user=" + username);
+}
+
+/**
+ * Loads reservations by time period.
+ */
+function loadReservationsByPeriod(startDate, endDate) {
+    return $.get("/api/getperiodreservations?startDate=" + startDate.toString() + "&endDate=" + endDate.toString());
+}
+
+/**
+ * Loads reservations by workplace ID and time period.
+ */
+function loadReservationsByWorkplaceAndPeriod(workplaceId, startDate, endDate) {
+    return $.get("/api/getworkplacereservations?startDate=" + startDate.toString() + "&endDate=" + endDate.toString() + "&workplaceId=" + workplaceId);
 }
 
 /**
