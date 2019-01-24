@@ -1,5 +1,6 @@
 package de.iteratec.officemap.reservation
 
+import de.iteratec.officemap.workplace.Workplace
 import de.iteratec.officemap.workplace.WorkplaceService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
@@ -101,14 +102,26 @@ class ReservationController
 
 }
 
-data class DeleteReservationsDTO(
-        val reservationIds: List<Long>
-)
-
-fun Reservation.toReservationDTO() = ReservationDTO(
+private fun Reservation.toReservationDTO() = ReservationDTO(
         id!!,
         startDate,
         endDate,
         username,
         workplace
 )
+
+data class ReservationDTO(
+        val id: Long,
+        val startDate: LocalDate,
+        val endDate: LocalDate,
+        val user: String,
+        val workplace: Workplace
+)
+
+data class DeleteReservationsDTO(
+        val reservationIds: List<Long>
+)
+
+data class AddReservationDTO(val workplaceId: Long,
+                             val startDate: LocalDate,
+                             val endDate: LocalDate)

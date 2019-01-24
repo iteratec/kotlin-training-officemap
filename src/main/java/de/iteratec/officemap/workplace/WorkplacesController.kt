@@ -1,5 +1,6 @@
 package de.iteratec.officemap.workplace
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiResponse
 import io.swagger.annotations.ApiResponses
@@ -16,7 +17,7 @@ class WorkplacesController @Autowired constructor(private val workplaceService: 
     @ApiOperation(value = "getAllWorkplaces", notes = "Returns a list of all workplaces.")
     fun allWorkplaces(): List<WorkplaceDTO> {
         return workplaceService.getAllWorkplaces()
-                .map { WorkplaceDTO(it) }
+                .map { it.toWorkplaceDTO() }
     }
 
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -43,3 +44,47 @@ class WorkplacesController @Autowired constructor(private val workplaceService: 
     }
 
 }
+
+private fun Workplace.toWorkplaceDTO() = WorkplaceDTO(
+        id!!,
+        name,
+        mapId,
+        x,
+        y,
+        equipment
+)
+
+data class WorkplaceDTO(
+        val id: Long,
+        val name: String,
+        val mapId: String,
+        val x: Int = 0,
+        val y: Int = 0,
+        val equipment: String
+)
+
+data class AddWorkplaceDTO(
+        val x: Int,
+        val y: Int,
+        val name: String,
+        val mapId: String,
+        val equipment: String)
+
+data class UpdateWorkplaceDTO(
+
+        @JsonProperty(required = true)
+        val x: Int,
+
+        @JsonProperty(required = true)
+        val y: Int,
+
+        @JsonProperty(required = true)
+        val name: String,
+
+        @JsonProperty(required = true)
+        val mapId: String,
+
+        @JsonProperty(required = true)
+        val equipment: String
+
+)
