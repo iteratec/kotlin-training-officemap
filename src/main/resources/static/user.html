@@ -27,7 +27,6 @@
 
         var userReservations = null;
         var userName = null;
-        var selectedReservations = [];
 
         // get workplaces and build map on document ready
         $(document).ready(function () {
@@ -61,8 +60,7 @@
             } else {
                 $('#selectedUser').html("");
                 $('#errorMessage').html("Bitte einen Namen eintragen!");
-                $('#reservationTable').html(
-                    "Bitte Mitarbeiter auswählen und anzeigen lassen!")
+                $('#reservationTable').html("Bitte Mitarbeiter auswählen und anzeigen lassen!")
             }
         }
 
@@ -90,38 +88,40 @@
             var checkboxList = [];
             var j = 0;
             for (var i = 0; i < tableInputs.length; i++) {
-                if (tableInputs[i].checked == true) {
+                if (tableInputs[i].checked === true) {
                     checkboxList[j] = tableInputs[i].id;
                     j++;
                 }
             }
-            if (checkboxList.length == 0) {
+            if (checkboxList.length === 0) {
                 $('#errorMessage').html("Bitte Reservierungen auswählen!");
             } else {
-                for (var i = 0; i < checkboxList.length; i++) {
-                    var reservation = {};
-                    reservation.workplaceId = userReservations[checkboxList[i]].workplace.id;
-                    reservation.startDate = userReservations[checkboxList[i]].date;
-                    reservation.endDate = userReservations[checkboxList[i]].endDate;
-                    selectedReservations.push(reservation);
-                }
-                deleteReservations();
+                var deleteReservationRequests = [];
+                checkboxList.forEach(function (checkbox) {
+                    var userReservation = userReservations[checkbox];
+                    deleteReservationRequests.push({
+                        "workplaceId": userReservation.workplace.id,
+                        "startDate": userReservation.date,
+                        "endDate": userReservation.endDate
+                    });
+                });
+                deleteReservations(deleteReservationRequests);
             }
         }
 
         //http request to delete a list of reservations for a user
-        function deleteReservations() {
+        function deleteReservations(deleteReservationRequests) {
             $.ajax({
                 type: "DELETE",
                 url: "/api/deletereservations",
                 contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(selectedReservations)
+                data: JSON.stringify(deleteReservationRequests)
             }).done(function () {
                 updateWorkplaces();
             });
         }
 
-        // Builds the HTML table out of parsedjson
+        // Builds the HTML table out of parsed json
         function buildReservationTable() {
             // Create dynamic table
             var table = document.createElement("table");
@@ -207,7 +207,7 @@
             defineAsDataTable();
         }
 
-        // Integration of jQuery Datatables
+        // Integration of jQuery data tables
         function defineAsDataTable() {
             $('#tableId').DataTable({
                 // Add german language plug-in
@@ -240,8 +240,8 @@
             }).fail(function () {
                 alert("error");
             });
-
         }
+
     </script>
 
 </head>

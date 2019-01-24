@@ -251,5 +251,6 @@ function buildMap(imageSrc, imageID, wpID, pulse, workplaces) {
         }
         $('#image').append(workplaceImg);
     }
+
 }
 
