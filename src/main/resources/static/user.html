@@ -72,7 +72,7 @@
                 url: "/api/getuserreservations?user=" + user,
                 type: "GET",
                 success: function (response) {
-                    userReservations = response;
+                    userReservations = response.map(stringDatesToLocalDates);
                     callback.call();
                 }
             }).fail(function () {
@@ -317,9 +317,9 @@
                                placeholder="Mitarbeitername" required>
                         <br><br>
                         <input type="submit" id="anzeige-button" class="btn btn-default"
-                               value="Anzeigen" onclick="loadUserData()"/>
+                               value="Anzeigen" onclick="loadUserData(); return false"/>
                         <input type="submit" class="btn btn-default" id="deleteReservations"
-                               value="Löschen" onclick="getCheckedReservations()"/>
+                               value="Löschen" onclick="getCheckedReservations(); return false"/>
                     </form>
 
                     <div id="errorMessage" style="color: red"></div>
