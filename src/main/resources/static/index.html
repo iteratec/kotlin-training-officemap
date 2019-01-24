@@ -59,8 +59,8 @@
 
         // gets selected start + end date from date picker
         function defineDate() {
-            startDate = JSJoda.LocalDate.parse($("#actualDateStart").val());
-            endDate = JSJoda.LocalDate.parse($("#actualDateEnd").val());
+            startDate = LocalDate.parse($("#actualDateStart").val());
+            endDate = LocalDate.parse($("#actualDateEnd").val());
 
             if (startDate.isAfter(endDate)) {
                 endDate = startDate;
@@ -84,7 +84,7 @@
                     changeYear: true,
                     // if a workplace is selected highlight its reservation days by applying class event to it
                     beforeShowDay: function (date) {
-                        var localDate = JSJoda.LocalDate.ofInstant(JSJoda.Instant.ofEpochMilli(date.getTime()));
+                        var localDate = LocalDate.ofInstant(Instant.ofEpochMilli(date.getTime()));
                         if (selectedWorkplaceId != null) {
                             //check if selected workplace has a reservation for this date
                             var highlight = workplaceReservationDays[localDate];
@@ -129,7 +129,7 @@
                         return [true, '', 'Verfügbar'];
                     },
                     onChangeMonthYear: function (year, month) {
-                        selMonthYear = JSJoda.LocalDate.of(year, month, 1);
+                        selMonthYear = LocalDate.of(year, month, 1);
                         if (selectedWorkplaceId != null) {
                             updateAll();
                         }
@@ -171,7 +171,7 @@
             var weekdays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
             // Check if the selected time period is more or equal than 7 days
-            if (startDate.until(endDate, JSJoda.ChronoUnit.DAYS) >= 7) {
+            if (startDate.until(endDate, ChronoUnit.DAYS) >= 7) {
                 $(".weekday").show();
             } else { // only show weekdays in the selected time period
                 $(".weekday").hide();
@@ -218,7 +218,7 @@
                 $("#errorMessage").html("Arbeitsplatz ist schon vergeben!");
             } else if (noWeekdayChecked && weekdaysShown) { // check if weekdays are selected
                 $("#errorMessage").html("Kein Wochentag ausgewählt!");
-            } else if (startDate < JSJoda.LocalDate.now()) { // check if date is in past time
+            } else if (startDate.isBefore(LocalDate.now())) { // check if date is in past time
                 $("#errorMessage").html("Liegt in der Vergangenheit!");
             } else {
                 var reservations = [];

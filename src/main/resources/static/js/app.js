@@ -5,10 +5,10 @@ var workplaces = [];
 //contains selected WorkplaceId
 var selectedWorkplaceId = null;
 //contains a date with the selected month and year of the datepicker
-var selMonthYear = JSJoda.LocalDate.now();
+var selMonthYear = LocalDate.now();
 var periodReservations = [];
 
-var startDate = JSJoda.LocalDate.now();
+var startDate = LocalDate.now();
 var endDate = startDate;
 
 var noWeekdayChecked = true;

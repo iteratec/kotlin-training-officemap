@@ -97,7 +97,7 @@ function buildReservationTable() {
 
         var dateCell = document.createElement("td");
 
-        var pattern = JSJoda.DateTimeFormatter.ofPattern('d.M.yyyy');
+        var pattern = DateTimeFormatter.ofPattern('dd.MM.yyyy');
         if (userReservation.startDate.isEqual(userReservation.endDate)) {
             dateCell.innerHTML = userReservation.startDate.format(pattern);
         } else {
@@ -125,7 +125,7 @@ function buildReservationTable() {
 }
 
 function getActiveOrFutureUserReservations() {
-    var today = JSJoda.LocalDate.now();
+    var today = LocalDate.now();
     return userReservations.filter(function (userReservation) {
         return !userReservation.endDate.isBefore(today);
     });

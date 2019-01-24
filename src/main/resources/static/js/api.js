@@ -1,12 +1,18 @@
+// import JSJoda classes
+var LocalDate = JSJoda.LocalDate;
+var DateTimeFormatter = JSJoda.DateTimeFormatter;
+var ChronoUnit = JSJoda.ChronoUnit;
+var Instant = JSJoda.Instant;
+
 /**
  * Helper function for a reservation: we need to convert the string dates like "2019-01-24" of reservations to their
- * JSJoda.LocalDate variants.
+ * LocalDate variants.
  * @returns The same reservation object (mutated), with `startDate` and `endDate` converted to LocalDates.
  */
 function stringDatesToLocalDates(reservation) {
     // parse dates as LocalDate objects
-    reservation.startDate = JSJoda.LocalDate.parse(reservation.startDate);
-    reservation.endDate = JSJoda.LocalDate.parse(reservation.endDate);
+    reservation.startDate = LocalDate.parse(reservation.startDate);
+    reservation.endDate = LocalDate.parse(reservation.endDate);
     return reservation;
 }
 
