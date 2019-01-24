@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class UpdateWorkplaceDTO(
 
         @JsonProperty(required = true)
-        val id: Long,
-
-        @JsonProperty(required = true)
         val x: Int,
 
         @JsonProperty(required = true)

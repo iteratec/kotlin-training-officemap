@@ -6,15 +6,84 @@
     <link rel="stylesheet" href="/jqueryui/jquery-ui.css">
     <script src="jqueryui/external/jquery/jquery.js"></script>
     <script src="jqueryui/jquery-ui.js"></script>
-    <link rel="stylesheet" href="/jqueryui/jquery-ui.theme.css" />
+    <link rel="stylesheet" href="/jqueryui/jquery-ui.theme.css"/>
 
-    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="/css/updateBootstrap.css" />
+    <link rel="stylesheet" href="bootstrap-3.3.7-dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/css/updateBootstrap.css"/>
     <script src="bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="/css/customstyle.css" />
+    <link rel="stylesheet" href="/css/customstyle.css"/>
 
-    <script type="text/javascript" src="js/DateUtils.js"></script>
-    <script type="text/javascript" src="js/admin_manage_workplace.js"></script>
+    <script type="text/javascript" src="js/js-joda.min.js"></script>
+    <script type="text/javascript" src="js/api.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            updateWorkplaces();
+        });
+
+
+        function updateWorkplaces() {
+            loadWorkplaces()
+                .done(function (response) {
+                    workplaces = response;
+
+                    buildMap("/images/equipment.png", false, true, true, workplaces);
+                });
+        }
+
+        function setChanges() {
+            var message = $("#message");
+            message.html("");
+
+            if (!selectedWorkplaceId) {
+                message.html("Bitte einen Arbeitsplatz auswählen!");
+                return;
+            }
+
+            var workplace = {
+                id: selectedWorkplaceId,
+                name: ($("#workplaceName").val()),
+                x: ($("#workplaceX").val()),
+                y: ($("#workplaceY").val()),
+                mapId: "frankfurt_office",
+                equipment: ($("#workplaceEquipment").val())
+            };
+
+            if (workplace.name === "") {
+                message.html("Der Name eines Arbeitsplatzes darf nicht leer sein!");
+                return;
+            }
+
+            if (isNaN(workplace.x) || isNaN(workplace.y) || workplace.x === "" || workplace.y === "") {
+                message.html("Die Koordinaten eines Arbeitsplatzes müssen eine Nummer sein!");
+                return;
+            }
+
+            updateWorkplace(workplace)
+                .always(function (response) {
+                    updateWorkplaces();
+                });
+        }
+
+        //lets a workplace pulse on click and saves the ID to selectedWorkplaceId
+        function pulseOnClick(workplaceImg) {
+            workplaceImg.click(function () {
+                $('.pulsation').toggleClass('pulsation');
+                var selWorkplaceName = $(this).data("workplaceName");
+                var selWorkplaceEquipment = $(this).data("workplaceEquipment");
+                var selWorkplaceX = $(this).data("x");
+                var selWorkplaceY = $(this).data("y");
+                selectedWorkplaceId = $(this).data("workplaceId");
+                document.getElementById("workplaceName").value = selWorkplaceName;
+                document.getElementById("workplaceEquipment").value = selWorkplaceEquipment;
+                document.getElementById("workplaceX").value = selWorkplaceX;
+                document.getElementById("workplaceY").value = selWorkplaceY;
+                $(this).addClass("pulsation");
+            });
+        }
+
+    </script>
 
 </head>
 <body>
@@ -72,7 +141,6 @@
                             <li><a href="/admin_delete_reservation.html">Reservierungen
                                 löschen</a></li>
                             <li class="active"><a href="/admin_manage_workplace.html">Arbeitsplätze verwalten</a></li>
-                            <li><a class="logout" href="/logout"><span class="glyphicon glyphicon-log-out"></span> Ausloggen</a></li>
                         </ul>
                     </div>
                 </div>
@@ -83,7 +151,7 @@
                 <div class="col-md-3 col-lg-3">
                     <h4>Einen Arbeitsplatzes verwalten:</h4>
                     <p>Um eine Arbeitsplatz zu verwalten, den entsprechenden Platz in der Grafik
-                       makieren und die Eigenschaften in den Textfeldern anpassen.
+                        makieren und die Eigenschaften in den Textfeldern anpassen.
                     </p>
                     <label for="workplaceName">Ausgewählter Arbeitsplatz: </label>
                     <input type="text" class="form-control" id="workplaceName" required="">
@@ -101,7 +169,7 @@
                     <br>
 
                     <input type="submit" class="btn btn-default" id="submitWorkplace"
-                           value="Änderungen bestätigen" onclick="setChanges()" />
+                           value="Änderungen bestätigen" onclick="setChanges()"/>
                     <br>
 
                     <div id="message" style="color: red"></div>

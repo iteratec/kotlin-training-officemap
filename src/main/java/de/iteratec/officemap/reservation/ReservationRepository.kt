@@ -2,8 +2,6 @@ package de.iteratec.officemap.reservation
 
 import de.iteratec.officemap.workplace.Workplace
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.transaction.annotation.Transactional
-
 import java.time.LocalDate
 
 interface ReservationRepository : JpaRepository<Reservation, Long> {
@@ -14,9 +12,5 @@ interface ReservationRepository : JpaRepository<Reservation, Long> {
             endDate: LocalDate, startDate: LocalDate, workplace: Workplace): List<Reservation>
 
     fun findByUsernameEqualsOrderByStartDateAsc(username: String): List<Reservation>
-
-    @Transactional
-    fun deleteByWorkplaceAndStartDateAndEndDate(
-            workplace: Workplace, startDate: LocalDate, endDate: LocalDate): List<Reservation>
 
 }

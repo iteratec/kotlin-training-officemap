@@ -87,25 +87,13 @@ class ReservationService @Autowired constructor(
      * deletes a list of reservation.
      * If any of the reservations does not exist, it will ignore the exception and delete the other
      */
-    fun deleteReservations(deletionRequests: List<DeleteReservationRequest>) {
-        if (deletionRequests.isEmpty()) {
-            return
-        }
-
-        val workplaceId = deletionRequests.first().workplaceId
-        require(deletionRequests.all { it.workplaceId == workplaceId })
-        val workplace = workplaceRepository.findById(workplaceId).orElseThrow { DoesNotExistException() }
-
-        for (request in deletionRequests) {
+    fun deleteReservations(reservationIds: List<Long>) {
+        reservationIds.forEach { reservationId ->
             try {
-                reservationRepository.deleteByWorkplaceAndStartDateAndEndDate(
-                        workplace,
-                        request.startDate,
-                        request.endDate)
+                reservationRepository.deleteById(reservationId)
             } catch (e: Exception) {
                 System.err.println(e.message)
             }
-
         }
     }
 
