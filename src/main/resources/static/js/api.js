@@ -38,3 +38,15 @@ function deleteWorkplace(workplaceId) {
 function loadWorkplaces() {
     return $.get("/api/workplaces");
 }
+
+/**
+ * Creates a new workplace.
+ */
+function createWorkplace(workplace) {
+    return $.ajax({
+        url: "/api/workplaces",
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(workplace)
+    });
+}
