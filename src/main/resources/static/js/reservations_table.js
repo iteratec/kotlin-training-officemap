@@ -97,10 +97,11 @@ function buildReservationTable() {
 
         var dateCell = document.createElement("td");
 
+        var pattern = JSJoda.DateTimeFormatter.ofPattern('d.M.yyyy');
         if (userReservation.startDate.isEqual(userReservation.endDate)) {
-            dateCell.innerHTML = userReservation.startDate.toString();
+            dateCell.innerHTML = userReservation.startDate.format(pattern);
         } else {
-            dateCell.innerHTML = userReservation.startDate + " - " + userReservation.endDate;
+            dateCell.innerHTML = userReservation.startDate.format(pattern) + " - " + userReservation.endDate.format(pattern);
         }
         tr.appendChild(dateCell);
 
