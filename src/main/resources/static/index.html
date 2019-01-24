@@ -84,46 +84,43 @@
                     changeYear: true,
                     // if a workplace is selected highlight its reservation days by applying class event to it
                     beforeShowDay: function (date) {
-                        var localDate = LocalDate.ofInstant(Instant.ofEpochMilli(date.getTime()));
+                        var currentDay = LocalDate.ofInstant(Instant.ofEpochMilli(date.getTime()));
                         if (selectedWorkplaceId != null) {
                             //check if selected workplace has a reservation for this date
-                            var highlight = workplaceReservationDays[localDate];
+                            var highlight = workplaceReservationDays[currentDay];
                             if (highlight) {
                                 return [
                                     true,
                                     "event",
                                     "Reserviert von: "
-                                    + workplaceReservationDays[localDate].user];
+                                    + workplaceReservationDays[currentDay].user];
                             }
                         }
-                        // if date is in selected time period
 
-                        if (!localDate.isBefore(startDate) && !localDate.isAfter(endDate)) {
+                        if (!currentDay.isBefore(startDate) && !currentDay.isAfter(endDate)) {
                             if (weekdaysShown) {
                                 // for all selected weekdays: check if they match the given date
                                 for (var i = 0; i < weekdayDateList.length; i++) {
-                                    if (weekdayDateList[i].date === localDate) {
+                                    if (weekdayDateList[i].date.isEqual(currentDay)) {
                                         return [
                                             true,
                                             "eventChosen",
                                             "Verfügbar"
-                                        ]
+                                        ];
                                     }
                                 }
                                 return [
                                     true,
                                     "",
                                     "Verfügbar"
-                                ]
+                                ];
                             } else {
                                 return [
                                     true,
                                     "eventChosen",
                                     "Verfügbar"
-                                ]
+                                ];
                             }
-                        } else {
-                            return [true, '', 'Verfügbar'];
                         }
 
                         return [true, '', 'Verfügbar'];
@@ -152,11 +149,11 @@
 
         // creates a list with all dates which are in the time period and fit on of the
         // selected weekdays
-        function searchWeekdays(checkedWeekdays) {
+        function searchWeekdays() {
             var weekdays = [];
             for (var i = 0; i < checkedWeekdays.length; i++) {
                 for (var date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-                    if (date.dayOfWeek().ordinal().toString() === checkedWeekdays[i]) {
+                    if (date.dayOfWeek().value().toString() === checkedWeekdays[i]) {
                         weekdays.push({"date": date});
                     }
                 }
@@ -168,7 +165,7 @@
         // checks how many weekdays are in the selected time period and shows them
         function showWeekdays() {
             // IDs of the Elements in HTML file
-            var weekdays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+            var weekdays = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
             // Check if the selected time period is more or equal than 7 days
             if (startDate.until(endDate, ChronoUnit.DAYS) >= 7) {
@@ -176,7 +173,7 @@
             } else { // only show weekdays in the selected time period
                 $(".weekday").hide();
                 for (var date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-                    $("#" + weekdays[date.dayOfWeek().ordinal() - 1]).show();
+                    $("#" + weekdays[date.dayOfWeek().value() - 1]).show();
                 }
             }
         }
@@ -188,11 +185,11 @@
                 checkedWeekdays[i] = $(this).val();
             });
 
-            weekdayDateList = searchWeekdays(checkedWeekdays);
+            weekdayDateList = searchWeekdays();
 
             noWeekdayChecked = true;
             for (var i = 0; i < weekdayDateList.length; i++) {
-                if (checkedWeekdays.indexOf(weekdayDateList[i].date.dayOfWeek().ordinal().toString()) !== -1) {
+                if (checkedWeekdays.indexOf(weekdayDateList[i].date.dayOfWeek().value().toString()) !== -1) {
                     noWeekdayChecked = false;
                 }
             }
