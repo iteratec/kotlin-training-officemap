@@ -30,7 +30,12 @@
 
         // get workplaces and build map on document ready
         $(document).ready(function () {
-            getUserName();
+            loadUsername().done(function (response) {
+                userName = response.name;
+                $('#user').val(userName);
+                loadUserData();
+            }
+        )
             updateWorkplaces();
 
             $("#search-form").submit(function () {
@@ -121,7 +126,7 @@
             });
         }
 
-        // Builds the HTML table out of parsed json
+        // Builds the HTML table out of parsedjson
         function buildReservationTable() {
             // Create dynamic table
             var table = document.createElement("table");
@@ -156,36 +161,25 @@
 
             // Create table body and fill it with userReservations data
             var body = table.createTBody();
-            var today = new Date();
-            today.setUTCHours(0, 0, 0, 0);
-
-            var parsedToday = Date.parse(today);
+            var today = JSJoda.LocalDate.now();
 
             for (var i = 0; i < userReservations.length; i++) {
-                if (userReservations[i].date >= parsedToday
-                    || userReservations[i].endDate >= parsedToday) {
+                var userReservation = userReservations[i];
+
+                if (!userReservation.endDate.isBefore(today)) {
                     tr = body.insertRow(-1);
                     tr.classList.add("Reservierung");
 
                     var workplaceCell = document.createElement("td");
-                    workplaceCell.innerHTML = userReservations[i].workplace.name;
+                    workplaceCell.innerHTML = userReservation.workplace.name;
                     tr.appendChild(workplaceCell);
 
                     var dateCell = document.createElement("td");
-                    var startDateString = userReservations[i].date;
-                    var endDateString = userReservations[i].endDate;
-                    var startDate = new Date(startDateString);
-                    var newStartDate = ('0' + startDate.getDate()).slice(-2) + '.'
-                        + ('0' + (startDate.getMonth() + 1)).slice(-2) + '.'
-                        + startDate.getFullYear();
-                    var endDate = new Date(endDateString);
-                    var newEndDate = ('0' + endDate.getDate()).slice(-2) + '.'
-                        + ('0' + (endDate.getMonth() + 1)).slice(-2) + '.'
-                        + endDate.getFullYear();
-                    if (startDateString < endDateString) {
-                        dateCell.innerHTML = newStartDate + " - " + newEndDate;
+
+                    if (userReservation.startDate.isEqual(userReservation.endDate)) {
+                        dateCell.innerHTML = userReservation.startDate.toString();
                     } else {
-                        dateCell.innerHTML = newStartDate;
+                        dateCell.innerHTML = userReservation.startDate + " - " + userReservation.endDate;
                     }
                     tr.appendChild(dateCell);
 
@@ -228,19 +222,6 @@
             });
         }
 
-        function getUserName() {
-            $.ajax({
-                url: "/api/user",
-                type: "GET",
-                success: function (response) {
-                    userName = response.name;
-                    $('#user').val(userName);
-                    loadUserData();
-                }
-            }).fail(function () {
-                alert("error");
-            });
-        }
 
     </script>
 

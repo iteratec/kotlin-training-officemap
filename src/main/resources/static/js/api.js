@@ -72,3 +72,11 @@ function deleteReservations(reservationIds) {
         })
     });
 }
+
+/**
+ * gets the username of the currently loggedin user
+ *
+ */
+function loadUsername() {
+    return $.get("/api/user");
+}
