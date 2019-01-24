@@ -151,7 +151,7 @@
             for (var i = 0; i < userReservations.length; i++) {
                 var userReservation = userReservations[i];
 
-                if (!userReservation.startDate.isBefore(today) || !userReservation.endDate.isAfter(today)) {
+                if (!userReservation.startDate.isBefore(today) || !userReservation.endDate.isBefore(today)) {
                     tr = body.insertRow(-1);
                     tr.classList.add("Reservierung");
 
