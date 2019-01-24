@@ -102,7 +102,7 @@
                             if (weekdaysShown) {
                                 // for all selected weekdays: check if they match the given date
                                 for (var i = 0; i < weekdayDateList.length; i++) {
-                                    if (weekdayDateList[i].startDate === localDate) {
+                                    if (weekdayDateList[i].date === localDate) {
                                         return [
                                             true,
                                             "eventChosen",
@@ -156,8 +156,8 @@
             var weekdays = [];
             for (var i = 0; i < checkedWeekdays.length; i++) {
                 for (var date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-                    if (date.dayOfWeek() === checkedWeekdays[i]) {
-                        weekdayDateList.append({"date": date});
+                    if (date.dayOfWeek().ordinal().toString() === checkedWeekdays[i]) {
+                        weekdays.push({"date": date});
                     }
                 }
             }
@@ -176,7 +176,7 @@
             } else { // only show weekdays in the selected time period
                 $(".weekday").hide();
                 for (var date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-                    $("#" + weekdays[date.dayOfWeek() - 1]).show();
+                    $("#" + weekdays[date.dayOfWeek().ordinal() - 1]).show();
                 }
             }
         }
@@ -192,7 +192,7 @@
 
             noWeekdayChecked = true;
             for (var i = 0; i < weekdayDateList.length; i++) {
-                if (checkedWeekdays.indexOf(weekdayDateList[i].date.dayOfWeek()) !== -1) {
+                if (checkedWeekdays.indexOf(weekdayDateList[i].date.dayOfWeek().ordinal().toString()) !== -1) {
                     noWeekdayChecked = false;
                 }
             }
