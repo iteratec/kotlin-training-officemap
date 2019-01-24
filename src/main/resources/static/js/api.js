@@ -11,7 +11,7 @@ function stringDatesToLocalDates(reservation) {
 }
 
 /**
- * Create multiple reservations.
+ * Creates multiple reservations.
  */
 function postReservations(reservations) {
     return $.ajax({
@@ -23,8 +23,18 @@ function postReservations(reservations) {
 }
 
 /**
+ * Deletes a workplace, including all its reservations.
+ */
+function deleteWorkplace(workplaceId) {
+    return $.ajax({
+        url: "/api/workplaces/" + workplaceId,
+        type: "DELETE"
+    });
+}
+
+/**
  * Loads all workplaces.
  */
 function loadWorkplaces() {
-    return $.get("/api/allworkplaces");
+    return $.get("/api/workplaces");
 }

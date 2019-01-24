@@ -9,36 +9,36 @@ import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/workplaces")
 class WorkplacesController @Autowired constructor(private val workplaceService: WorkplaceService) {
 
-    @GetMapping("/allworkplaces")
+    @GetMapping
     @ApiOperation(value = "getAllWorkplaces", notes = "Returns a list of all workplaces.")
     fun allWorkplaces(): List<WorkplaceDTO> {
         return workplaceService.getAllWorkplaces()
                 .map { WorkplaceDTO(it) }
     }
 
-    @PostMapping("/addworkplace", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @ApiOperation(value = "addNewWorkplace", notes = "Adds one new workplace to the database.")
+    @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @ApiOperation(value = "addNewWorkplace", notes = "Creates a new workplace.")
     @ResponseStatus(HttpStatus.OK)
     @ApiResponses(value = [ApiResponse(code = 406, message = "Entry already exists")])
     fun addWorkplace(@RequestBody workplaceDTO: AddWorkplaceDTO) {
         workplaceService.addNewWorkplace(Workplace(null, workplaceDTO.name, workplaceDTO.x, workplaceDTO.y, workplaceDTO.mapId, workplaceDTO.equipment))
     }
 
-    @DeleteMapping("/deleteworkplace", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @ApiOperation(value = "deleteWorkplace", notes = "Deletes one workplace from the database.")
-    @ApiResponses(value = [ApiResponse(code = 406, message = "Entry does not exists")])
-    fun deleteWorkplace(@RequestBody deleteWorkplaceDTO: DeleteWorkplaceDTO) {
-        workplaceService.deleteWorkplace(deleteWorkplaceDTO.id)
+    @DeleteMapping("{workplaceId}")
+    @ApiOperation(value = "deleteWorkplace", notes = "Deletes a workplace.")
+    @ApiResponses(value = [ApiResponse(code = 406, message = "Entry does not exist")])
+    fun deleteWorkplace(@PathVariable("workplaceId") workplaceId: Long) {
+        workplaceService.deleteWorkplace(workplaceId)
     }
 
-    @PutMapping("/updateworkplace", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @ApiOperation(value = "updateWorkplace", notes = "Updates one workplace in the database.")
-    @ApiResponses(value = [ApiResponse(code = 406, message = "Entry does not exists")])
-    fun updateWorkplace(@RequestBody workplaceDTO: UpdateWorkplaceDTO) {
-        val updateWorkplace = Workplace(workplaceDTO.id, workplaceDTO.name, workplaceDTO.x, workplaceDTO.y, workplaceDTO.mapId, workplaceDTO.equipment)
+    @PutMapping("{workplaceId}", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    @ApiOperation(value = "updateWorkplace", notes = "Updates an existing workplace.")
+    @ApiResponses(value = [ApiResponse(code = 406, message = "Entry does not exist")])
+    fun updateWorkplace(@RequestBody workplaceDTO: UpdateWorkplaceDTO, @PathVariable("workplaceId") workplaceId: Long) {
+        val updateWorkplace = Workplace(workplaceId, workplaceDTO.name, workplaceDTO.x, workplaceDTO.y, workplaceDTO.mapId, workplaceDTO.equipment)
         workplaceService.updateWorkplace(updateWorkplace)
     }
 

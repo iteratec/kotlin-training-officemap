@@ -31,27 +31,13 @@
                 });
         }
 
-        //http request to delete one workplace from the database
-        function deleteWorkplace() {
-            $.ajax({
-                url: "/api/deleteworkplace",
-                type: "DELETE",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({
-                    id: selectedWorkplaceId
-                }),
-                success: function (response) {
-                    updateWorkplaces();
-                }
-            }).fail(function () {
-                alert("error");
-            });
-        }
-
         // shows pop up to confirm deletion
         function clickedDelete() {
             if (confirm("Soll der Arbeitsplatz endgültig gelöscht werden?")) {
-                deleteWorkplace();
+                deleteWorkplace(selectedWorkplaceId)
+                    .done(function (response) {
+                        updateWorkplaces();
+                    });
             } else {
                 return false;
             }

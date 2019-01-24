@@ -61,7 +61,7 @@
             }
 
             $.ajax({
-                url: "/api/updateworkplace",
+                url: "/api/workplaces/" + workplace.id,
                 type: "PUT",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(workplace),
