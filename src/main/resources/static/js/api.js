@@ -50,3 +50,10 @@ function createWorkplace(workplace) {
         data: JSON.stringify(workplace)
     });
 }
+
+/**
+ * Loads all reservations of a username.
+ */
+function loadReservationsByUsername(username) {
+    return $.get("/api/getuserreservations?user=" + username);
+}
