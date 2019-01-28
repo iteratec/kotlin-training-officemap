@@ -1,5 +1,5 @@
 object Versions {
-    val kotlin = "1.3.11"
+    val kotlin = "1.3.20"
     val springBoot = "2.0.3.RELEASE"
     val swagger = "2.9.2"
     val flyway = "5.2.1"
