@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.model.AllOpen
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
@@ -10,7 +9,7 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}")
         classpath("org.jetbrains.kotlin:kotlin-allopen:${Versions.kotlin}")
         classpath("org.jetbrains.kotlin:kotlin-noarg:${Versions.kotlin}")
-		classpath("org.owasp:dependency-check-gradle:4.0.2")
+        classpath("org.owasp:dependency-check-gradle:4.0.2")
     }
 }
 
@@ -22,7 +21,7 @@ plugins {
     kotlin("plugin.jpa") version Versions.kotlin
     id("org.springframework.boot") version Versions.springBoot
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
-	id("org.owasp.dependencycheck") version "4.0.2"
+    id("org.owasp.dependencycheck") version "4.0.2"
 }
 
 repositories {
