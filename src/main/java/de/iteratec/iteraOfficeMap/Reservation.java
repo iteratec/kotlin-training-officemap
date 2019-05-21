@@ -15,8 +15,6 @@ public class Reservation {
     private Long startDate;
     private Long endDate;
     private String username;
-    @Column(columnDefinition = "boolean default false")
-    private boolean adhoc = false;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -28,7 +26,6 @@ public class Reservation {
 
     public Reservation(Long startDate, Workplace workplace, String username) {
         super();
-        this.adhoc = false;
         this.startDate = startDate;
         this.endDate = startDate;
         this.workplace = workplace;
@@ -36,9 +33,8 @@ public class Reservation {
     }
 
     public Reservation(Long startDate, Long endDate, Workplace workplace,
-                       String username, Boolean adhoc) {
+                       String username) {
         super();
-        this.adhoc = adhoc;
         this.startDate = startDate;
         this.endDate = endDate;
         this.workplace = workplace;
@@ -50,8 +46,7 @@ public class Reservation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Reservation that = (Reservation) o;
-        return adhoc == that.adhoc &&
-                Objects.equals(startDate, that.startDate) &&
+        return Objects.equals(startDate, that.startDate) &&
                 Objects.equals(endDate, that.endDate) &&
                 Objects.equals(username, that.username) &&
                 Objects.equals(workplace, that.workplace);
@@ -60,7 +55,7 @@ public class Reservation {
     @Override
     public int hashCode() {
 
-        return Objects.hash(startDate, endDate, username, adhoc, workplace);
+        return Objects.hash(startDate, endDate, username, workplace);
     }
 
     public Long getReservationId() {
@@ -103,11 +98,4 @@ public class Reservation {
         this.workplace = workplace;
     }
 
-    public void setAdhoc(boolean adhoc) {
-        this.adhoc = adhoc;
-    }
-
-    public boolean isAdhoc() {
-        return adhoc;
-    }
 }

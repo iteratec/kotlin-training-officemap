@@ -11,14 +11,12 @@ public class AddReservationDTO {
         this.endDate = reservation.getEndDate();
         this.user = reservation.getUser();
         this.workplaceId = reservation.getWorkplace().getId();
-        this.adhoc = reservation.isAdhoc();
     }
 
     Long workplaceId;
     Long startDate;
     Long endDate;
     String user;
-    boolean adhoc;
 
     public String getUser() {
         return user;
@@ -52,11 +50,4 @@ public class AddReservationDTO {
         this.endDate = endDate;
     }
 
-    public boolean isAdhoc() {
-        return adhoc;
-    }
-
-    public void setAdhoc(boolean adhoc) {
-        this.adhoc = adhoc;
-    }
 }

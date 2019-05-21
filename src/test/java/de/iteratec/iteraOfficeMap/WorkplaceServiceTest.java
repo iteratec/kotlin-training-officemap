@@ -95,17 +95,7 @@ public class WorkplaceServiceTest {
     }
 
     @Test
-    void getStatusOfAdhocReservedTest() {
-        workplace4 = new Workplace("fourth", 4, 4, "mapId");
-        workplaceRepository.save(workplace4);
-        Reservation reserveToday = new Reservation(currentDay, currentDay, workplace4, "Sascha", true);
-        reservationRepository.save(reserveToday);
-
-        assertEquals(Status.ADHOC, workplaceService.getStatus(workplace4.getId()));
-    }
-
-    @Test
-    void getStatusOfNonAdhocReservedTest() {
+    void getStatusOfReservedTest() {
         workplace4 = new Workplace("fourth", 4, 4, "mapId");
         workplaceRepository.save(workplace4);
         Reservation reserveToday = new Reservation(currentDay, workplace4, "Sascha");

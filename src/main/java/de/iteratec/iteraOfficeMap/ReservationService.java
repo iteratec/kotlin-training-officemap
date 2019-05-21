@@ -1,13 +1,11 @@
 package de.iteratec.iteraOfficeMap;
 
 import de.iteratec.iteraOfficeMap.exceptions.*;
-import de.iteratec.iteraOfficeMap.utility.DateUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +40,7 @@ public class ReservationService {
 
     private void addReservationDirect(AddReservationDTO addReservationDTO, Workplace workplace, Principal principal) {
         reservationRepository.save(new Reservation(addReservationDTO.startDate,
-                addReservationDTO.endDate, workplace, principal.getName(), addReservationDTO.adhoc));
+                addReservationDTO.endDate, workplace, principal.getName()));
     }
 
     private Workplace checkValidityAndGetWorkplace(AddReservationDTO addReservationDTO) {
@@ -80,22 +78,6 @@ public class ReservationService {
     }
 
     /**
-     * adds a new adhoc reservation to the database
-     *
-     * @param workplaceID
-     */
-    public void reserveAdhoc(Long workplaceID) {
-
-        Workplace workplace = workplaceRepository.findById(workplaceID).get();
-        Reservation reservation = new Reservation(100L, 150L, workplace, "SaschAdhoc", true);
-
-        AddReservationDTO addReservationDTO = new AddReservationDTO(reservation);
-        addReservation(addReservationDTO, () -> "adHock");
-
-
-    }
-
-    /**
      * @param startDate
      * @param endDate
      * @param workplaceId
@@ -115,7 +97,7 @@ public class ReservationService {
 
         for (Iterator<Reservation> iterator = reservationList.iterator(); iterator
                 .hasNext(); ) {
-            Reservation reservation = (Reservation) iterator.next();
+            Reservation reservation = iterator.next();
             ReservationDTO reservationDTO = new ReservationDTO(reservation);
             conflictingReservations.add(reservationDTO);
         }
@@ -133,7 +115,7 @@ public class ReservationService {
                         date);
         for (Iterator<Reservation> iterator = allReservations.iterator(); iterator
                 .hasNext(); ) {
-            Reservation reservation = (Reservation) iterator.next();
+            Reservation reservation = iterator.next();
             ReservationDTO reservationDTO = new ReservationDTO(reservation);
             dailyReservations.add(reservationDTO);
         }
@@ -157,7 +139,7 @@ public class ReservationService {
                         endDate, startDate);
         for (Iterator<Reservation> iterator = allReservations.iterator(); iterator
                 .hasNext(); ) {
-            Reservation reservation = (Reservation) iterator.next();
+            Reservation reservation = iterator.next();
             ReservationDTO reservationDTO = new ReservationDTO(reservation);
             periodReservations.add(reservationDTO);
         }
@@ -181,7 +163,7 @@ public class ReservationService {
                         workplace);
         for (Iterator<Reservation> iterator = allReservations.iterator(); iterator
                 .hasNext(); ) {
-            Reservation reservation = (Reservation) iterator.next();
+            Reservation reservation = iterator.next();
             ReservationDTO reservationDTO = new ReservationDTO(reservation);
             workplaceReservations.add(reservationDTO);
         }
@@ -198,7 +180,7 @@ public class ReservationService {
                 .findByUsernameEqualsOrderByStartDateAsc(user);
         for (Iterator<Reservation> iterator = allReservations.iterator(); iterator
                 .hasNext(); ) {
-            Reservation reservation = (Reservation) iterator.next();
+            Reservation reservation = iterator.next();
             ReservationDTO reservationDTO = new ReservationDTO(reservation);
             userReservations.add(reservationDTO);
         }
@@ -249,23 +231,5 @@ public class ReservationService {
             }
         }
     }
-
-    public void removeAdhoc(Long workplaceID) {
-        Workplace workplace = workplaceRepository.findById(workplaceID).get();
-
-        Long date = DateUtility.startOfDay(new Date());
-        Reservation reservation = reservationRepository
-                .findByStartDateEqualsAndWorkplace(date, workplace);
-        if (reservation == null) {
-            throw new DoesNotExistException();
-        } else if (!reservation.isAdhoc()) {
-            throw new InvalidReservationException();
-        } else {
-            DeleteReservationDTO deleteReservationDTO = new DeleteReservationDTO(reservation);
-            deleteReservation(deleteReservationDTO);
-        }
-
-    }
-
 
 }

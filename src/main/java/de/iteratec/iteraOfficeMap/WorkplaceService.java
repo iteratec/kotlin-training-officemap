@@ -35,7 +35,7 @@ public class WorkplaceService {
      * checks the status of the reservation
      *
      * @param workplaceID
-     * @return 0 if free, 1 if adhoc Reserved and 2 if reserved normally
+     * @return 0 if free, 1 if reserved normally
      */
     public Status getStatus(Long workplaceID) {
         //macAddress = MacAddressValidator.convertMac(macAddress);
@@ -46,9 +46,6 @@ public class WorkplaceService {
                 .findByStartDateEqualsAndWorkplace(date, workplace);
         if (reservation == null) {
             return Status.FREE;
-        } else if (reservation.isAdhoc()) {
-            return Status.ADHOC;
-
         } else {
             return Status.NORMALRESERVATION;
         }

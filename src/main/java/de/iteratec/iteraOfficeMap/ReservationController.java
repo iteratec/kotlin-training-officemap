@@ -34,13 +34,6 @@ public class ReservationController {
         reservationService.addReservation(reservation, principal);
     }
 
-    @ApiOperation(value = "reserveadhoc", notes = "Adds one new adhoc reservation to the database.")
-    @RequestMapping(method = RequestMethod.POST, value = "/reserveadhoc", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 406, message = "Entry already exists")})
-    public void reserveAdhoc(@RequestBody Long workplaceID) {
-        reservationService.reserveAdhoc(workplaceID);
-    }
-
     @ApiOperation(value = "addReservations", notes = "Adds a list of reservations to the database.")
     @RequestMapping(method = RequestMethod.POST, value = "/addreservations", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {@ApiResponse(code = 406, message = "Entry already exists")})
@@ -84,11 +77,4 @@ public class ReservationController {
         reservationService.deleteReservations(reservations);
     }
 
-    @ApiOperation(value = "removeadhoc", notes = "Deletes a list of reservations from the database.")
-    @RequestMapping(method = RequestMethod.DELETE, value = "/removeadhoc", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Entry has been deleted or does not exist or is not adhoc reserved")})
-    public void removeAdhoc(
-            @RequestBody Long workplaceID) {
-        reservationService.removeAdhoc(workplaceID);
-    }
 }

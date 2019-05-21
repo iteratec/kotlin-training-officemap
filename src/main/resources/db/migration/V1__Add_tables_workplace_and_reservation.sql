@@ -15,7 +15,6 @@ CREATE TABLE workplace (
 
 CREATE TABLE reservation (
     id bigint NOT NULL PRIMARY KEY,
-    adhoc boolean DEFAULT false,
     end_date bigint NOT NULL,
     start_date bigint NOT NULL,
     username text NOT NULL,
