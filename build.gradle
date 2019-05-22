@@ -1,5 +1,6 @@
 buildscript {
     ext {
+        kotlinVersion = '1.3.31'
         springBootVersion = '2.0.3.RELEASE'
     }
     repositories {
@@ -7,9 +8,11 @@ buildscript {
     }
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
+apply plugin: 'kotlin'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
@@ -39,6 +42,8 @@ dependencies {
     compile group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.0.7.RELEASE'
     compile group: 'org.springframework.security', name: 'spring-security-oauth2-jose', version: '5.0.7.RELEASE'
     compile 'org.flywaydb:flyway-core:5.2.1'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8"
 
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.4.2')
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
