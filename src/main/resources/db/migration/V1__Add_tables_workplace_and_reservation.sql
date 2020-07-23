@@ -7,8 +7,8 @@ CREATE SEQUENCE hibernate_sequence
 
 CREATE TABLE workplace (
     id bigint NOT NULL PRIMARY KEY,
-    name text UNIQUE,
-    map_id text NOT NULL,
+    name VARCHAR(255) UNIQUE,
+    map_id VARCHAR(255) NOT NULL,
     x integer NOT NULL,
     y integer NOT NULL
 );
@@ -17,7 +17,7 @@ CREATE TABLE reservation (
     id bigint NOT NULL PRIMARY KEY,
     end_date bigint NOT NULL,
     start_date bigint NOT NULL,
-    username text NOT NULL,
+    username VARCHAR(255) NOT NULL,
     workplace_id bigint NOT NULL,
     CONSTRAINT reservation_workplace_id_foreign_key FOREIGN KEY (workplace_id) REFERENCES workplace(id) ON DELETE CASCADE
 );
