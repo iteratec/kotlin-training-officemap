@@ -1,5 +1,5 @@
 ALTER TABLE workplace
-    ADD COLUMN equipment text NOT NULL DEFAULT '';
+    ADD COLUMN equipment VARCHAR(255) NOT NULL DEFAULT '';
 
 ALTER TABLE workplace
     ALTER COLUMN equipment DROP DEFAULT;

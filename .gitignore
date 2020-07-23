@@ -79,6 +79,11 @@ $RECYCLE.BIN/
 .gradle
 /build/
 
+/buildSrc/build/
+
+### Maven ###
+/target/
+
 # Ignore Gradle GUI config
 gradle-app.setting
 

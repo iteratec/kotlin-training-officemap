@@ -49,6 +49,12 @@ dependencies {
     compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8")
 
+    compile("javax.xml.ws:jaxws-api:2.3.1")
+    compile("org.javassist:javassist:3.25.0-GA")
+    compile("javax.activation:activation:1.1.1")
+
+    runtime("com.h2database:h2")
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:${Versions.junit}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${Versions.junit}")
     testCompile("org.hamcrest:hamcrest-core:2.1")
